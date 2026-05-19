@@ -43,7 +43,7 @@ new #[Layout('layouts.app')] class extends Component
             'name'                  => 'required|string|min:2|max:100',
             'email'                 => 'required|email|max:100|unique:users,email,' . $userId,
             'phone'                 => 'nullable|string|max:20|unique:users,phone,' . $userId,
-            'telegram_id'           => 'nullable|numeric|min:100000000|max:2000000000|unique:users,telegram_id,' . $userId,
+            'telegram_id'           => 'nullable|numeric|min:1000000000|max:9999999999|unique:users,telegram_id,' . $userId,
             'password'              => 'nullable|string|min:8',
             'password_confirmation' => 'nullable|string|same:password',
         ]);
