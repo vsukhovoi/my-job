@@ -9,6 +9,7 @@ use App\Payments\CheckoutService;
 use App\Payments\Gateways\LiqPayGateway;
 use App\Payments\Gateways\MonoPayGateway;
 use App\Payments\Gateways\WayForPayGateway;
+use App\Services\InvoiceService;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -25,6 +26,16 @@ new #[Layout('layouts.app')] class extends Component
         }
 
         $this->plan = $plan;
+    }
+
+    public function payByIban(): void
+    {
+        $invoice = app(InvoiceService::class)->create(
+            auth()->user(),
+            (int) ($this->plan->price_monthly * 100)
+        );
+
+        $this->redirect(route('employer.billing.invoice.show', $invoice->invoice_number), navigate: false);
     }
 
     public function pay(string $gateway): void
@@ -100,6 +111,26 @@ new #[Layout('layouts.app')] class extends Component
                 </div>
                 <svg class="ml-auto w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
+
+            <div class="flex items-center gap-3 my-1">
+                <div class="flex-1 h-px bg-gray-200"></div>
+                <span class="text-xs text-gray-400">або</span>
+                <div class="flex-1 h-px bg-gray-200"></div>
+            </div>
+
+            {{-- IBAN --}}
+            <button wire:click="payByIban" wire:loading.attr="disabled"
+                    class="flex items-center gap-4 w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl hover:border-green-500 hover:shadow-md transition-all text-left">
+                <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shrink-0">
+                    <span class="text-white text-xs font-black">UA</span>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-900">Банківський переказ (IBAN)</p>
+                    <p class="text-xs text-gray-500">Рахунок-фактура · оплата протягом 30 днів</p>
+                </div>
+                <svg class="ml-auto w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+
         </div>
 
         <div class="mt-6 text-center">
