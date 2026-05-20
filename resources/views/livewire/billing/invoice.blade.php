@@ -119,9 +119,9 @@ new #[Layout('layouts.app')] class extends Component {
                         <span class="font-medium">{{ $invoice->mfo }}</span>
                     </div>
                     @endif
-                    <div class="flex flex-col gap-1">
-                        <span class="text-gray-500">IBAN</span>
-                        <span class="font-mono font-medium text-xs break-all">{{ $invoice->iban }}</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-500 shrink-0">IBAN</span>
+                        <span class="font-mono font-medium" style="font-size:16px;">{{ $invoice->iban }}</span>
                     </div>
                 </div>
             </div>
