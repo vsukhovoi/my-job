@@ -409,6 +409,50 @@
 
 ---
 
+### 12. Profile Completeness Modal — заповненість профілю роботодавця
+
+**Файл:** `resources/views/livewire/employer/profile-completeness-modal.blade.php`  
+**Компонент:** `<livewire:employer.profile-completeness-modal />`  
+**Підключення:** `layouts/app.blade.php` — тільки для `UserRole::Employer`  
+**Тип:** centered modal (по центру екрана на всіх breakpoints)  
+**Backdrop:** `bg-black/50`, `fixed inset-0`  
+**Розмір:** `max-w-md`, `mx-4`, `rounded-2xl`, `p-6`  
+**Анімація:** `opacity-0 scale-95` → `opacity-100 scale-100` (300ms enter / 200ms leave)
+
+#### Логіка показу
+
+| Умова | Результат |
+|-------|-----------|
+| `score < 100` AND `shown_at IS NULL` | показати |
+| `score < 100` AND `shown_at < today` | показати (раз на добу) |
+| `score < 100` AND `shown_at >= today` | не показувати |
+| `score = 100` | не показувати |
+| роль не `Employer` | не показувати |
+
+Після показу: `profile_completeness_modal_shown_at = now()` (колонка у `users`).
+
+#### Структура UI (скріншот: dark theme, 50%)
+
+| Елемент | Опис |
+|---------|------|
+| Заголовок | «Ваш профіль заповнено на {score}% 🎯», `text-lg font-bold` |
+| Прогрес-бар | `h-2.5 rounded-full`, колір: green ≥75% / amber ≥40% / red <40% |
+| 🚀 Більше довіри | «Профілі зі 100% заповненням отримують на 40% більше відгуків» |
+| 🔝 Вище у пошуку | «Повністю готові профілі відображаються першими у списках» |
+| ⏱ Економія часу | «Шукачі одразу бачать ваші переваги та умови» |
+| CTA кнопка | «Заповнити до 100%» — `bg-blue-600`, `w-full`, `rounded-xl`, `wire:click="goFill"` → `employer.profile` |
+| Посилання | «Нагадати пізніше» — сірий текст, `wire:click="dismiss"` → `show = false` |
+
+#### Дії
+
+| Метод | Дія |
+|-------|-----|
+| `mount()` | обчислює score, перевіряє умову показу, оновлює `shown_at` |
+| `dismiss()` | `show = false` |
+| `goFill()` | `show = false` + redirect → `route('employer.profile')` |
+
+---
+
 ### Базовий компонент `<x-modal>`
 
 **Файл:** `resources/views/components/modal.blade.php`  
