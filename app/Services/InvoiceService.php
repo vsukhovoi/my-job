@@ -75,10 +75,9 @@ class InvoiceService
 
     private function generateNumber(): string
     {
-        $year   = now()->year;
-        $lastId = Invoice::whereYear('created_at', $year)->max('id') ?? 0;
+        $lastId = Invoice::max('id') ?? 0;
         $seq    = str_pad((string) ($lastId + 1), 5, '0', STR_PAD_LEFT);
 
-        return "INV-{$year}-{$seq}";
+        return "MJ-{$seq}";
     }
 }

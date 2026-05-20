@@ -18,7 +18,7 @@ class InvoiceFactory extends Factory
 
     public function definition(): array
     {
-        $number = 'INV-' . now()->year . '-' . str_pad((string) fake()->unique()->numberBetween(1, 99999), 5, '0', STR_PAD_LEFT);
+        $number = 'MJ-' . str_pad((string) fake()->unique()->numberBetween(1, 99999), 5, '0', STR_PAD_LEFT);
 
         return [
             'user_id'         => User::factory(),

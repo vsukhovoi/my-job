@@ -56,9 +56,14 @@ new #[Layout('layouts.app')] class extends Component {
     @endif
 
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">
-            Рахунок {{ $invoice->invoice_number }}
-        </h1>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">
+                Рахунок-фактура № {{ $invoice->invoice_number }}
+            </h1>
+            <p class="text-sm text-gray-500 mt-0.5">
+                від {{ $invoice->created_at->locale('uk')->isoFormat('D MMMM YYYY') }} р.
+            </p>
+        </div>
         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
             {{ $invoice->status->color() === 'green' ? 'bg-green-100 text-green-800' : '' }}
             {{ $invoice->status->color() === 'yellow' ? 'bg-yellow-100 text-yellow-800' : '' }}

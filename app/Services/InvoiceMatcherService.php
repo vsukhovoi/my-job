@@ -16,7 +16,7 @@ class InvoiceMatcherService
 
     /**
      * Матчинг транзакцій з pending-рахунками.
-     * Шукає номер INV-XXXX-XXXXX у полі description транзакції.
+     * Шукає номер MJ-XXXXX у полі description транзакції.
      *
      * @param array<int, array{id: string, description: string, amount: int}> $statements
      */
@@ -35,7 +35,7 @@ class InvoiceMatcherService
             $description = $statement['description'] ?? '';
             $statementId = $statement['id'] ?? null;
 
-            if (!preg_match('/(INV-\d{4}-\d{5})/', $description, $matches)) {
+            if (!preg_match('/(MJ-\d{5})/', $description, $matches)) {
                 continue;
             }
 

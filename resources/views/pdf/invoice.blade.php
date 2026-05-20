@@ -45,8 +45,8 @@
             <div style="color:#6b7280; margin-top:4px;">myjob.co.ua</div>
         </div>
         <div class="invoice-meta">
-            <div class="number">Рахунок № {{ $invoice->invoice_number }}</div>
-            <div class="date">від {{ $invoice->created_at->format('d.m.Y') }}</div>
+            <div class="number">Рахунок-фактура № {{ $invoice->invoice_number }}</div>
+            <div class="date">від {{ $invoice->created_at->locale('uk')->isoFormat('D MMMM YYYY') }} р.</div>
             <div style="margin-top:6px;">
                 <span class="status-badge {{ $invoice->isPaid() ? 'status-paid' : 'status-pending' }}">
                     {{ $invoice->status->label() }}

@@ -34,7 +34,7 @@ class InvoiceTest extends TestCase
             'status'  => InvoiceStatus::Pending->value,
             'edrpou'  => config('invoice.edrpou'),
         ]);
-        $this->assertStringStartsWith('INV-', $invoice->invoice_number);
+        $this->assertStringStartsWith('MJ-', $invoice->invoice_number);
         $this->assertStringContainsString($invoice->invoice_number, $invoice->payment_purpose);
     }
 
