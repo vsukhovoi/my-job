@@ -7,7 +7,6 @@ use App\Enums\PlanType;
 use App\Models\EmployerSubscription;
 use App\Models\SubscriptionPlan;
 use App\Models\Vacancy;
-use App\Services\InvoiceService;
 use App\Services\SubscriptionService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -19,17 +18,6 @@ use Livewire\WithPagination;
 new #[Layout('layouts.app')] class extends Component
 {
     use WithPagination;
-
-    public function payByIban(int $planId): void
-    {
-        $plan    = SubscriptionPlan::findOrFail($planId);
-        $invoice = app(InvoiceService::class)->create(
-            auth()->user(),
-            (int) ($plan->price_monthly * 100)
-        );
-
-        $this->redirect(route('employer.billing.invoice.show', $invoice->invoice_number), navigate: false);
-    }
 
     public function activatePlan(int $planId): void
     {
@@ -286,13 +274,6 @@ new #[Layout('layouts.app')] class extends Component
                                         : 'bg-blue-600 text-white hover:bg-blue-700' }}">
                             {{ $isCurrent ? 'Активний' : 'Активувати' }}
                         </button>
-
-                        @if(!$isCurrent && $plan->price_monthly > 0)
-                            <button wire:click="payByIban({{ $plan->id }})"
-                                    class="mt-2 w-full py-2 text-sm font-medium rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
-                                Оплатити по рахунку (IBAN)
-                            </button>
-                        @endif
                     </div>
                 @endforeach
         </div>
