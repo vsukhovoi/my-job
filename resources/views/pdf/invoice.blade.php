@@ -7,7 +7,7 @@
     body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #1a1a1a; }
     .page { padding: 30px 40px; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 2px solid #2563eb; padding-bottom: 16px; }
-    .logo { height: 60px; width: auto; display: block; }
+    .logo { height: 150px; width: auto; display: block; }
     .invoice-meta { text-align: right; }
     .invoice-meta .number { font-size: 16px; font-weight: 700; }
     .invoice-meta .date { color: #6b7280; margin-top: 4px; }
@@ -41,7 +41,7 @@
 <div class="page">
     <div class="header">
         <div>
-            <img src="{{ public_path('img/logo/mj-logo.png') }}" alt="My Job" style="height:60px; width:auto; display:block;">
+            <img src="{{ public_path('img/logo/mj-logo.png') }}" alt="My Job" style="height:150px; width:auto; display:block;">
             <div style="color:#6b7280; margin-top:4px; font-size:11px;">myjob.co.ua</div>
         </div>
         <div class="invoice-meta">
