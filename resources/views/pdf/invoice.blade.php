@@ -19,7 +19,7 @@
     .party-detail { color: #374151; margin-top: 2px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
     table thead tr { background: #2563eb; color: #fff; }
-    table thead th { padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 600; }
+    table thead th { padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; }
     table tbody tr:nth-child(even) { background: #f9fafb; }
     table tbody td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
     .total-row { background: #eff6ff !important; font-weight: 700; }
@@ -28,7 +28,7 @@
     .payment-box-title { font-weight: 700; color: #166534; margin-bottom: 10px; }
     .payment-row { display: flex; margin-bottom: 5px; }
     .payment-label { color: #6b7280; width: 160px; flex-shrink: 0; }
-    .payment-value { font-weight: 600; word-break: break-all; }
+    .payment-value { font-weight: 700; overflow-wrap: break-word; }
     .purpose-box { background: #fefce8; border: 1px solid #fde047; border-radius: 6px; padding: 12px; margin-bottom: 20px; }
     .purpose-text { font-weight: 700; font-size: 12px; }
     .footer { border-top: 1px solid #e5e7eb; padding-top: 12px; color: #9ca3af; font-size: 9px; text-align: center; }
@@ -86,7 +86,7 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td>Послуги платформи My Job (рекламне розміщення)</td>
+                <td>Послуги з розміщення інформації на веб-сайті My Job</td>
                 <td style="text-align:right;">{{ $invoice->amountFormatted() }}</td>
             </tr>
             <tr class="total-row">
