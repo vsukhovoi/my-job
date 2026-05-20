@@ -1116,3 +1116,19 @@ html[data-theme="dark"] .about-feature-card .about-card-desc {
 html[data-theme="dark"] .about-feature-card .about-card-item {
     color: #E5E7EB !important;
 }
+
+
+/* ── Dark theme: Invoice page colored blocks ── */
+html[data-theme="dark"] .bg-blue-50 { background-color: #1e3a5f !important; }
+html[data-theme="dark"] .border-blue-200 { border-color: #1d4ed8 !important; }
+html[data-theme="dark"] .text-blue-600 { color: #93c5fd !important; }
+html[data-theme="dark"] .text-blue-900 { color: #bfdbfe !important; }
+html[data-theme="dark"] .text-blue-500 { color: #93c5fd !important; }
+html[data-theme="dark"] .bg-yellow-50 { background-color: #422006 !important; }
+html[data-theme="dark"] .border-yellow-200 { border-color: #854d0e !important; }
+html[data-theme="dark"] .text-yellow-900 { color: #fef08a !important; }
+html[data-theme="dark"] .text-yellow-600 { color: #fbbf24 !important; }
+html[data-theme="dark"] .bg-green-50 { background-color: #052e16 !important; }
+html[data-theme="dark"] .border-green-200 { border-color: #166534 !important; }
+html[data-theme="dark"] .text-green-800 { color: #86efac !important; }
+html[data-theme="dark"] .text-green-600 { color: #4ade80 !important; }
