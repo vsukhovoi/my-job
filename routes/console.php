@@ -11,6 +11,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('mono:check-payments')->everyThirtyMinutes();
+Schedule::command('invoices:check-payments')->everyFiveMinutes();
 
 Schedule::command('app:send-vacancy-alerts')->hourly();
 Schedule::command('app:deactivate-expired-featured')->daily();

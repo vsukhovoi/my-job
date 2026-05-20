@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.3",
         "bacon/bacon-qr-code": "^3.1",
+        "barryvdh/laravel-dompdf": "^3.1",
         "filament/filament": "^4.0",
         "laravel/framework": "^13.0",
         "laravel/socialite": "^5.26",
@@ -15,7 +16,8 @@
         "livewire/livewire": "^3.6.4",
         "livewire/volt": "^1.7.0",
         "nutgram/nutgram": "^4.45",
-        "socialiteproviders/apple": "^5.9"
+        "socialiteproviders/apple": "^5.9",
+        "stripe/stripe-php": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.2",

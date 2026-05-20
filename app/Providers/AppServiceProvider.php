@@ -14,7 +14,9 @@ use App\Policies\VacancyPolicy;
 use App\Events\ApplicationStatusChanged;
 use App\Events\InterviewRequestSent;
 use App\Events\InterviewResponseSubmitted;
+use App\Events\InvoicePaid;
 use App\Events\VacancyExtended;
+use App\Listeners\ActivateOrderOnInvoicePaid;
 use App\Listeners\BroadcastToLivewire;
 use App\Listeners\NotifyApplicationStatusChanged;
 use App\Listeners\NotifyEmployerOfExtension;
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(ApplicationStatusChanged::class, NotifyApplicationStatusChanged::class);
         Event::listen(InterviewRequestSent::class, NotifyInterviewRequestSent::class);
         Event::listen(InterviewResponseSubmitted::class, NotifyInterviewResponseSubmitted::class);
+        Event::listen(InvoicePaid::class, ActivateOrderOnInvoicePaid::class);
         Event::listen(SocialiteWasCalled::class, AppleExtendSocialite::class);
 
         Gate::policy(Resume::class, ResumePolicy::class);

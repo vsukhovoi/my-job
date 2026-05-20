@@ -114,6 +114,7 @@ Route::middleware(['auth', 'role:employer'])
         Volt::route('/billing', 'pages.employer.billing')->name('billing');
         Volt::route('/billing/checkout/addon/{addon}', 'pages.employer.billing-checkout-addon')->name('billing.checkout.addon');
         Volt::route('/billing/checkout/{plan}', 'pages.employer.billing-checkout')->name('billing.checkout');
+        Volt::route('/billing/invoice/{invoiceNumber}', 'billing.invoice')->name('billing.invoice.show');
         Route::match(['GET', 'POST'], '/billing/success', function () {
             return view('employer.billing-success');
         })->name('billing.success');
