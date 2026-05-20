@@ -28,6 +28,9 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
+<div class="min-h-screen mj-billing-bg">
+<x-employer-tabs />
+
 <div class="max-w-2xl mx-auto px-4 py-8">
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">
@@ -119,4 +122,5 @@ new #[Layout('layouts.app')] class extends Component {
             Завантажити PDF
         </button>
     </div>
+</div>
 </div>
