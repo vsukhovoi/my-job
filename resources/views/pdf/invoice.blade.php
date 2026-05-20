@@ -12,14 +12,14 @@
     .invoice-meta .number { font-size: 16px; font-weight: 700; }
     .invoice-meta .date { color: #6b7280; margin-top: 4px; font-size: 13px; }
     .section { margin-bottom: 20px; }
-    .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; margin-bottom: 6px; }
     .parties { display: flex; gap: 40px; margin-bottom: 24px; }
     .party { flex: 1; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; }
-    .party-name { font-weight: 700; font-size: 12px; margin-bottom: 4px; }
-    .party-detail { color: #374151; margin-top: 2px; }
+    .party-name { font-weight: 700; font-size: 16px; margin-bottom: 2px; color: #000; line-height: 0.9; }
+    .party-detail { color: #000; margin-top: 2px; font-size: 16px; line-height: 0.9; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    table thead tr { background: #2563eb; color: #fff; }
-    table thead th { padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; }
+    table thead tr { background: #f3f4f6; color: #111827; border-bottom: 2px solid #d1d5db; }
+    table thead th { padding: 8px 10px; text-align: left; font-size: 12px; font-weight: 700; }
     table tbody tr:nth-child(even) { background: #f9fafb; }
     table tbody td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
     .total-row { background: #eff6ff !important; font-weight: 700; }
@@ -80,7 +80,7 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td>Послуги з розміщення інформації на веб-сайті My Job</td>
+                <td>{{ $invoice->payment_purpose }}</td>
                 <td style="text-align:right;">{{ $invoice->amountFormatted() }}</td>
             </tr>
             <tr class="total-row">
