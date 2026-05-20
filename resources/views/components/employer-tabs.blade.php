@@ -7,6 +7,7 @@
         ['route' => 'employer.message.templates',  'label' => 'Шаблони повідомлень'],
         ['route' => 'employer.analytics',          'label' => 'Аналітика'],
         ['route' => 'employer.billing',            'label' => 'Тарифи'],
+        ['route' => 'employer.payments',           'label' => 'Оплата'],
         ['route' => 'employer.profile',            'label' => 'Профіль компанії'],
         ['route' => 'employer.my-profile',         'label' => 'Мій профіль'],
         ['route' => 'employer.support',            'label' => 'Підтримка', 'badge' => true],
@@ -16,6 +17,7 @@
         'employer.vacancies.create'          => 'employer.dashboard',
         'employer.vacancies.edit'            => 'employer.dashboard',
         'employer.vacancies.payment.success' => 'employer.billing',
+        'employer.billing.invoice.show'      => 'employer.payments',
         'employer.applicants'                => 'employer.dashboard',
         'employer.candidate.detail'          => 'employer.candidates',
     ];
