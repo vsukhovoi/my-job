@@ -13,10 +13,13 @@ use Illuminate\Support\Facades\DB;
 
 class InvoiceService
 {
-    public function create(User $user, int $amountKopecks, ?int $orderId = null, array $payerData = []): Invoice
+    public function create(User $user, int $amountKopecks, ?int $orderId = null, array $payerData = [], ?string $planName = null): Invoice
     {
-        return DB::transaction(function () use ($user, $amountKopecks, $orderId, $payerData) {
-            $number = $this->generateNumber();
+        return DB::transaction(function () use ($user, $amountKopecks, $orderId, $payerData, $planName) {
+            $number  = $this->generateNumber();
+            $date    = now()->locale('uk')->isoFormat('D MMMM YYYY');
+            $tariff  = $planName ? ", тариф {$planName}" : '';
+            $purpose = "Послуги з розміщення інформації на веб-сайті My Job{$tariff}, рахунок № {$number} від {$date} р. без ПДВ";
 
             return Invoice::create([
                 'user_id'         => $user->id,
@@ -31,7 +34,7 @@ class InvoiceService
                 'edrpou'          => config('invoice.edrpou'),
                 'bank_name'       => config('invoice.bank_name'),
                 'mfo'             => config('invoice.mfo'),
-                'payment_purpose' => "Оплата послуг My Job, рахунок {$number}",
+                'payment_purpose' => $purpose,
                 'expires_at'      => now()->addDays(30),
             ]);
         });

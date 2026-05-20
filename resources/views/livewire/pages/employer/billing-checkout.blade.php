@@ -32,7 +32,8 @@ new #[Layout('layouts.app')] class extends Component
     {
         $invoice = app(InvoiceService::class)->create(
             auth()->user(),
-            (int) ($this->plan->price_monthly * 100)
+            (int) ($this->plan->price_monthly * 100),
+            planName: $this->plan->name
         );
 
         $this->redirect(route('employer.billing.invoice.show', $invoice->invoice_number), navigate: false);
