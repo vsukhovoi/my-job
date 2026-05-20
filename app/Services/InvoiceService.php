@@ -54,6 +54,25 @@ class InvoiceService
         event(new InvoicePaid($invoice));
     }
 
+    /**
+     * Скасування рахунку клієнтом. Дозволено тільки для статусу pending.
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
+     */
+    public function cancel(Invoice $invoice, User $user): void
+    {
+        if ($invoice->user_id !== $user->id) {
+            throw new \Illuminate\Auth\Access\AuthorizationException('Немає доступу до цього рахунку.');
+        }
+
+        if ($invoice->status !== InvoiceStatus::Pending) {
+            throw new \InvalidArgumentException('Скасувати можна лише рахунок зі статусом «Очікує оплати».');
+        }
+
+        $invoice->update(['status' => InvoiceStatus::Cancelled]);
+    }
+
     private function generateNumber(): string
     {
         $year   = now()->year;

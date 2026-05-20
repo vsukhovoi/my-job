@@ -132,4 +132,73 @@ class InvoiceTest extends TestCase
         Volt::test('billing.invoice', ['invoiceNumber' => $invoice->invoice_number])
             ->assertNotFound();
     }
+
+    #[Test]
+    public function employer_can_cancel_pending_invoice(): void
+    {
+        $user    = User::factory()->create(['role' => UserRole::Employer]);
+        $invoice = Invoice::factory()->create([
+            'user_id' => $user->id,
+            'status'  => InvoiceStatus::Pending,
+        ]);
+
+        app(InvoiceService::class)->cancel($invoice, $user);
+
+        $this->assertEquals(InvoiceStatus::Cancelled, $invoice->fresh()->status);
+    }
+
+    #[Test]
+    public function employer_cannot_cancel_paid_invoice(): void
+    {
+        $user    = User::factory()->create(['role' => UserRole::Employer]);
+        $invoice = Invoice::factory()->create([
+            'user_id' => $user->id,
+            'status'  => InvoiceStatus::Paid,
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        app(InvoiceService::class)->cancel($invoice, $user);
+    }
+
+    #[Test]
+    public function employer_cannot_cancel_another_users_invoice(): void
+    {
+        $owner   = User::factory()->create(['role' => UserRole::Employer]);
+        $other   = User::factory()->create(['role' => UserRole::Employer]);
+        $invoice = Invoice::factory()->create([
+            'user_id' => $owner->id,
+            'status'  => InvoiceStatus::Pending,
+        ]);
+
+        $this->expectException(\Illuminate\Auth\Access\AuthorizationException::class);
+        app(InvoiceService::class)->cancel($invoice, $other);
+    }
+
+    #[Test]
+    public function cancel_button_visible_for_pending_invoice_in_volt(): void
+    {
+        $user    = User::factory()->create(['role' => UserRole::Employer]);
+        $invoice = Invoice::factory()->create([
+            'user_id' => $user->id,
+            'status'  => InvoiceStatus::Pending,
+        ]);
+
+        $this->actingAs($user);
+        Volt::test('billing.invoice', ['invoiceNumber' => $invoice->invoice_number])
+            ->assertSee('Скасувати рахунок');
+    }
+
+    #[Test]
+    public function cancel_button_hidden_for_paid_invoice_in_volt(): void
+    {
+        $user    = User::factory()->create(['role' => UserRole::Employer]);
+        $invoice = Invoice::factory()->create([
+            'user_id' => $user->id,
+            'status'  => InvoiceStatus::Paid,
+        ]);
+
+        $this->actingAs($user);
+        Volt::test('billing.invoice', ['invoiceNumber' => $invoice->invoice_number])
+            ->assertDontSee('Скасувати рахунок');
+    }
 }

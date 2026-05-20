@@ -16,6 +16,17 @@ new #[Layout('layouts.app')] class extends Component {
             ->first() ?? abort(404);
     }
 
+    public function cancel(): void
+    {
+        try {
+            app(InvoiceService::class)->cancel($this->invoice, auth()->user());
+            $this->invoice->refresh();
+            session()->flash('success', 'Рахунок скасовано.');
+        } catch (\InvalidArgumentException $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
     public function downloadPdf(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $pdf = app(InvoiceService::class)->generatePdf($this->invoice);
@@ -32,6 +43,18 @@ new #[Layout('layouts.app')] class extends Component {
 <x-employer-tabs />
 
 <div class="max-w-2xl mx-auto px-4 py-8">
+
+    @if(session('success'))
+        <div class="mb-4 bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-3 text-sm">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="mb-4 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">
             Рахунок {{ $invoice->invoice_number }}
@@ -110,7 +133,7 @@ new #[Layout('layouts.app')] class extends Component {
         </div>
     @endif
 
-    <div class="flex gap-3">
+    <div class="flex flex-wrap gap-3">
         <button
             wire:click="downloadPdf"
             class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-700 transition-colors"
@@ -121,6 +144,32 @@ new #[Layout('layouts.app')] class extends Component {
             </svg>
             Завантажити PDF
         </button>
+
+        @if($invoice->status === \App\Enums\InvoiceStatus::Pending)
+            <div x-data="{ confirm: false }">
+                <button
+                    x-show="!confirm"
+                    x-on:click="confirm = true"
+                    class="flex items-center gap-2 px-4 py-2.5 border border-red-300 text-red-600 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors"
+                >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Скасувати рахунок
+                </button>
+                <div x-show="confirm" x-cloak class="flex items-center gap-2">
+                    <span class="text-sm text-red-600">Впевнені?</span>
+                    <button wire:click="cancel"
+                            class="px-3 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">
+                        Так, скасувати
+                    </button>
+                    <button x-on:click="confirm = false"
+                            class="px-3 py-2 border border-gray-300 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
+                        Ні
+                    </button>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 </div>

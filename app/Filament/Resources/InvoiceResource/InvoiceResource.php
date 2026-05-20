@@ -90,6 +90,21 @@ class InvoiceResource extends Resource
                             ->success()
                             ->send();
                     }),
+                Tables\Actions\Action::make('cancel_invoice')
+                    ->label('Скасувати')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (Invoice $record) => $record->status === InvoiceStatus::Pending)
+                    ->requiresConfirmation()
+                    ->modalHeading('Скасувати рахунок')
+                    ->modalDescription('Рахунок буде переведено в статус «Скасовано». Цю дію не можна відмінити.')
+                    ->action(function (Invoice $record) {
+                        $record->update(['status' => InvoiceStatus::Cancelled]);
+                        Notification::make()
+                            ->title('Рахунок скасовано')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->defaultSort('created_at', 'desc');
     }
