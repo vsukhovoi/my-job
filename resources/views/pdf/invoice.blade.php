@@ -7,10 +7,10 @@
     body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #1a1a1a; }
     .page { padding: 30px 40px; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 2px solid #2563eb; padding-bottom: 16px; }
-    .logo { height: 150px; width: auto; display: block; }
-    .invoice-meta { text-align: right; }
+    .logo { height: 120px; width: auto; display: block; }
+    .invoice-meta { text-align: right; margin-top: -50px; }
     .invoice-meta .number { font-size: 16px; font-weight: 700; }
-    .invoice-meta .date { color: #6b7280; margin-top: 4px; }
+    .invoice-meta .date { color: #6b7280; margin-top: 4px; font-size: 13px; }
     .section { margin-bottom: 20px; }
     .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; margin-bottom: 6px; }
     .parties { display: flex; gap: 40px; margin-bottom: 24px; }
@@ -41,17 +41,11 @@
 <div class="page">
     <div class="header">
         <div>
-            <img src="{{ public_path('img/logo/mj-logo.png') }}" alt="My Job" style="height:150px; width:auto; display:block;">
-            <div style="color:#6b7280; margin-top:4px; font-size:11px;">myjob.co.ua</div>
+            <img src="{{ public_path('img/logo/mj-logo.png') }}" alt="My Job" style="height:120px; width:auto; display:block;">
         </div>
         <div class="invoice-meta">
             <div class="number">Рахунок-фактура № {{ $invoice->invoice_number }}</div>
             <div class="date">від {{ $invoice->created_at->locale('uk')->isoFormat('D MMMM YYYY') }} р.</div>
-            <div style="margin-top:6px;">
-                <span class="status-badge {{ $invoice->isPaid() ? 'status-paid' : 'status-pending' }}">
-                    {{ $invoice->status->label() }}
-                </span>
-            </div>
         </div>
     </div>
 
