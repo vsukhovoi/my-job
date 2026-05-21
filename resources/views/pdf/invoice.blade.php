@@ -14,7 +14,7 @@
     .section { margin-bottom: 20px; }
     .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; margin-bottom: 6px; }
     .parties { display: flex; gap: 40px; margin-bottom: 24px; }
-    .party { flex: 1; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; }
+    .party { flex: 1; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; }
     .party-name { font-weight: 700; font-size: 16px; margin-bottom: 2px; color: #000; line-height: 0.9; }
     .party-detail { color: #000; margin-top: 2px; font-size: 16px; line-height: 0.9; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #000; font-size: 14px; }
@@ -103,8 +103,16 @@
     </div>
 
 @if($invoice->expires_at)
-    <div style="color:#6b7280; margin-bottom:20px; font-size:10px;">
+    <div style="color:#6b7280; margin-bottom:12px; font-size:10px;">
         Рахунок дійсний до {{ $invoice->expires_at->format('d.m.Y') }}
+    </div>
+    <div style="color:#374151; margin-bottom:8px; font-size:10px; line-height:1.5;">
+        На підставі статей 634 та 642 Цивільного кодексу України, оплата цього рахунку є повним і безумовним прийняттям (акцептом) умов Договору публічної оферти про надання послуг з оброблення даних та розміщення інформації, розміщеного за посиланням: myjob.co.ua/offer, та чинних Тарифів Виконавця, розміщених за посиланням: myjob.co.ua/pricing. Надання послуг за цим рахунком не потребує підписання двосторонніх паперових Актів приймання-передачі наданих послуг.
+    </div>
+    <div style="width:100%; height:1px; background-color:#000; font-size:0; line-height:0; margin-bottom:8px;"></div>
+    <div style="color:#374151; font-size:10px; line-height:1.5; margin-bottom:20px;">
+        <span style="font-weight:700;">Увага! У призначені платежу обов'язково необхідно вказувати (так як зазначено у рахунку): "Розміщення інформації на веб-сайті My Job, тариф (Ваш тариф), рахунок № ХХ-ХХХХХ від дд.мм.рррр. без ПДВ" (де ХХ-ХХХХХ — номер Вашого рахунку).
+        В іншому випадку платіж може бути не зараховано.</span>
     </div>
     @endif
 
