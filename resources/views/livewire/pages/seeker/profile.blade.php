@@ -115,10 +115,10 @@ new #[Layout('layouts.app')] class extends Component
                 {{-- Telegram ID --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Telegram ID</label>
-                    <input wire:model="telegram_id" type="text" placeholder="123456789"
+                    <input wire:model="telegram_id" type="text" placeholder="1234567890"
                            class="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400">
                     <p class="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
-                        Дізнатись свій ID можна через бот
+                        Не менше 10 цифр. Дізнатись свій ID можна через бот
                         <a href="https://t.me/userinfobot" target="_blank" class="text-blue-500 hover:underline">@userinfobot</a>
                     </p>
                     @error('telegram_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
