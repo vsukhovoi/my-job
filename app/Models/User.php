@@ -13,13 +13,14 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\PlanFeature;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role', 'telegram_id', 'telegram_link_token', 'provider', 'provider_id', 'profile_completeness_modal_shown_at', 'notification_channel'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'telegram_id', 'city_id', 'telegram_link_token', 'provider', 'provider_id', 'profile_completeness_modal_shown_at', 'notification_channel'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
@@ -41,6 +42,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->role === UserRole::Admin;
+    }
+
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function company(): HasOne

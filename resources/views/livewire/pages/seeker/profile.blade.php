@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\City;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
@@ -18,6 +19,8 @@ new #[Layout('layouts.app')] class extends Component
 
     public string $telegram_id = '';
 
+    public ?int $city_id = null;
+
     #[Validate('nullable|string|min:8')]
     public string $password = '';
 
@@ -26,6 +29,11 @@ new #[Layout('layouts.app')] class extends Component
 
     public bool $saved = false;
 
+    public function cities(): \Illuminate\Database\Eloquent\Collection
+    {
+        return City::orderBy('name')->get(['id', 'name']);
+    }
+
     public function mount(): void
     {
         $user = auth()->user();
@@ -33,6 +41,7 @@ new #[Layout('layouts.app')] class extends Component
         $this->email       = $user->email;
         $this->phone       = $user->phone ?? '';
         $this->telegram_id = $user->telegram_id ? (string) $user->telegram_id : '';
+        $this->city_id     = $user->city_id;
     }
 
     public function save(): void
@@ -44,6 +53,7 @@ new #[Layout('layouts.app')] class extends Component
             'email'                 => 'required|email|max:100|unique:users,email,' . $userId,
             'phone'                 => 'nullable|string|max:20|unique:users,phone,' . $userId,
             'telegram_id'           => 'nullable|numeric|min:1000000000|max:9999999999|unique:users,telegram_id,' . $userId,
+            'city_id'               => 'nullable|exists:cities,id',
             'password'              => 'nullable|string|min:8',
             'password_confirmation' => 'nullable|string|same:password',
         ]);
@@ -53,6 +63,7 @@ new #[Layout('layouts.app')] class extends Component
             'email'       => $this->email,
             'phone'       => $this->phone ?: null,
             'telegram_id' => $this->telegram_id ?: null,
+            'city_id'     => $this->city_id,
         ];
 
         if ($this->password) {
@@ -122,6 +133,19 @@ new #[Layout('layouts.app')] class extends Component
                         <a href="https://t.me/userinfobot" target="_blank" class="text-blue-500 hover:underline">@userinfobot</a>
                     </p>
                     @error('telegram_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- City --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Місто</label>
+                    <select wire:model="city_id"
+                            class="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400">
+                        <option value="">— Не вказано —</option>
+                        @foreach($this->cities() as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('city_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <hr class="border-gray-100 dark:border-gray-700">
