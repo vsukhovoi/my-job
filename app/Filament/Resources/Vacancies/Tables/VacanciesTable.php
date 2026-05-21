@@ -25,6 +25,16 @@ class VacanciesTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('title')
+                    ->label('Назва')
+                    ->searchable()
+                    ->limit(50),
+
                 TextColumn::make('company.name')
                     ->label('Компанія')
                     ->searchable(),
@@ -33,16 +43,31 @@ class VacanciesTable
                     ->label('Категорія')
                     ->searchable(),
 
-                TextColumn::make('title')
-                    ->label('Назва')
-                    ->searchable()
-                    ->limit(50),
-
                 TextColumn::make('status')
                     ->label('Статус')
                     ->badge()
                     ->color(fn (VacancyStatus $state) => $state->color())
                     ->formatStateUsing(fn (VacancyStatus $state) => $state->label()),
+
+                TextColumn::make('published_at')
+                    ->label('Опубліковано')
+                    ->dateTime('d.m.Y H:i')
+                    ->sortable()
+                    ->placeholder('—'),
+
+                TextColumn::make('expires_at')
+                    ->label('Завершення')
+                    ->dateTime('d.m.Y H:i')
+                    ->sortable()
+                    ->placeholder('—')
+                    ->color(fn ($record) =>
+                        $record->is_active && $record->hours_left !== null && $record->hours_left < 72
+                            ? 'warning' : null
+                    ),
+
+                TextColumn::make('countdown_label')
+                    ->label('Залишок')
+                    ->placeholder('—'),
 
                 TextColumn::make('publication_type')
                     ->label('Тип')
@@ -66,26 +91,6 @@ class VacanciesTable
                     ->dateTime('d.m.Y')
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('published_at')
-                    ->label('Опубліковано')
-                    ->dateTime('d.m.Y H:i')
-                    ->sortable()
-                    ->placeholder('—'),
-
-                TextColumn::make('expires_at')
-                    ->label('Завершення')
-                    ->dateTime('d.m.Y H:i')
-                    ->sortable()
-                    ->placeholder('—')
-                    ->color(fn ($record) =>
-                        $record->is_active && $record->hours_left !== null && $record->hours_left < 72
-                            ? 'warning' : null
-                    ),
-
-                TextColumn::make('countdown_label')
-                    ->label('Залишок')
-                    ->placeholder('—'),
 
                 TextColumn::make('salary_from')
                     ->label('Зарплата від')

@@ -7,7 +7,9 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use App\Enums\UserRole;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class UsersTable
@@ -95,7 +97,7 @@ class UsersTable
                 TextColumn::make('role')
                     ->label('Роль')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\UserRole ? $state->label() : $state)
+                    ->formatStateUsing(fn ($state) => $state instanceof UserRole ? $state->label() : $state)
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Створено')
@@ -108,7 +110,15 @@ class UsersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([])
+            ->filters([
+                SelectFilter::make('role')
+                    ->label('Роль')
+                    ->options(array_column(
+                        array_map(fn($case) => ['value' => $case->value, 'label' => $case->label()], UserRole::cases()),
+                        'label',
+                        'value'
+                    )),
+            ])
             ->recordActions([
                 EditAction::make()->label('Редагувати'),
                 DeleteAction::make()
