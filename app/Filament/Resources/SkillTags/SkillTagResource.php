@@ -25,7 +25,7 @@ class SkillTagResource extends Resource
     protected static ?string $navigationLabel  = 'Навички';
     protected static ?string $modelLabel       = 'Навичка';
     protected static ?string $pluralModelLabel = 'Навички';
-    protected static ?int    $navigationSort   = 50;
+    protected static ?int    $navigationSort   = 20;
 
     public static function form(Schema $schema): Schema
     {

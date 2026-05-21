@@ -22,6 +22,7 @@ class InterviewRequestResource extends Resource
     protected static ?string $navigationLabel  = 'Інтерв\'ю';
     protected static ?string $modelLabel       = 'Запит на інтерв\'ю';
     protected static ?string $pluralModelLabel = 'Запити на інтерв\'ю';
+    protected static ?int    $navigationSort   = 30;
 
     public static function form(Schema $schema): Schema
     {

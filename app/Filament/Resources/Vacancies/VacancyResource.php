@@ -23,6 +23,7 @@ class VacancyResource extends Resource
     protected static ?string $navigationLabel  = 'Вакансії';
     protected static ?string $modelLabel       = 'Вакансія';
     protected static ?string $pluralModelLabel = 'Вакансії';
+    protected static ?int    $navigationSort   = 60;
 
     public static function form(Schema $schema): Schema
     {
