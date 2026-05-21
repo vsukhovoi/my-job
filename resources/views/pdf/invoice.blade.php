@@ -41,11 +41,7 @@
 <div class="page">
     <div class="header">
         <div>
-            @if(isset($previewMode) && $previewMode)
-            <img src="{{ $logoB64 }}" alt="My Job" style="height:120px; width:auto; display:block;">
-            @else
             <img src="{{ public_path('img/logo/mj-logo.png') }}" alt="My Job" style="height:120px; width:auto; display:block;">
-            @endif
         </div>
         <div class="invoice-meta">
             <div class="number">Рахунок-фактура № {{ $invoice->invoice_number }}</div>
