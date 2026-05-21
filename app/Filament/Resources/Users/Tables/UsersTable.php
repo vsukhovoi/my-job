@@ -111,6 +111,11 @@ class UsersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('city_id')
+                    ->label('Місто')
+                    ->relationship('city', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('role')
                     ->label('Роль')
                     ->options(array_column(
