@@ -46,8 +46,9 @@ new #[Layout('layouts.guest')] class extends Component
     <form wire:submit="register">
 
         {{-- Role switcher --}}
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
         <div class="role-switcher" style="display: inline-flex; gap: 12px; width: 340px; background: #e8eaed;
-             border-radius: 10px; padding: 4px; margin-bottom: 20px;">
+             border-radius: 10px; padding: 4px;">
             <button type="button" wire:click="setRole('candidate')"
                     style="flex: 1; padding: 10px; font-size: 16px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all 0.3s ease;
                            border: 1px solid {{ $role === 'candidate' ? '#2d323b' : 'transparent' }};
@@ -64,6 +65,7 @@ new #[Layout('layouts.guest')] class extends Component
                            box-shadow: {{ $role === 'employer' ? '0 4px 8px rgba(45,50,59,0.2)' : 'none' }};">
                 Роботодавець
             </button>
+        </div>
         </div>
 
         <div>
