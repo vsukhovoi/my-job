@@ -17,13 +17,13 @@
     .party { flex: 1; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; }
     .party-name { font-weight: 700; font-size: 16px; margin-bottom: 2px; color: #000; line-height: 0.9; }
     .party-detail { color: #000; margin-top: 2px; font-size: 16px; line-height: 0.9; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    table thead tr { background: #f3f4f6; color: #111827; border-bottom: 2px solid #d1d5db; }
-    table thead th { padding: 8px 10px; text-align: left; font-size: 12px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #000; font-size: 14px; }
+    table thead tr { background: #f3f4f6; color: #111827; }
+    table thead th { padding: 8px 10px; text-align: left; font-weight: 700; border: 1px solid #000; }
     table tbody tr:nth-child(even) { background: #f9fafb; }
-    table tbody td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
+    table tbody td { padding: 8px 10px; border: 1px solid #000; }
     .total-row { background: #eff6ff !important; font-weight: 700; }
-    .total-row td { border-top: 2px solid #2563eb; font-size: 13px; }
+    .total-row td { border: 1px solid #000; font-size: 14px; }
     .payment-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
     .payment-box-title { font-weight: 700; color: #166534; margin-bottom: 10px; }
     .payment-row { display: flex; margin-bottom: 5px; }
@@ -41,7 +41,11 @@
 <div class="page">
     <div class="header">
         <div>
+            @if(isset($previewMode) && $previewMode)
+            <img src="{{ $logoB64 }}" alt="My Job" style="height:120px; width:auto; display:block;">
+            @else
             <img src="{{ public_path('img/logo/mj-logo.png') }}" alt="My Job" style="height:120px; width:auto; display:block;">
+            @endif
         </div>
         <div class="invoice-meta">
             <div class="number">Рахунок-фактура № {{ $invoice->invoice_number }}</div>
@@ -72,56 +76,37 @@
     <table>
         <thead>
             <tr>
-                <th>№</th>
-                <th>Найменування послуги</th>
-                <th style="text-align:right;">Сума (грн)</th>
+                <th style="width:1%; white-space:nowrap;">№</th>
+                <th style="width:auto;">Найменування послуги</th>
+                <th style="width:1%; white-space:nowrap; text-align:center;">К-сть</th>
+                <th style="width:1%; white-space:nowrap; text-align:center;">Од.</th>
+                <th style="width:1%; white-space:nowrap; text-align:right;">Ціна (грн)</th>
+                <th style="width:1%; white-space:nowrap; text-align:right;">Сума (грн)</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>1</td>
                 <td>{{ $invoice->payment_purpose }}</td>
-                <td style="text-align:right;">{{ $invoice->amountFormatted() }}</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:center;">посл.</td>
+                <td style="text-align:right;">{{ number_format($invoice->amount / 100, 2, ',', ' ') }}</td>
+                <td style="text-align:right;">{{ number_format($invoice->amount / 100, 2, ',', ' ') }}</td>
             </tr>
             <tr class="total-row">
-                <td colspan="2" style="text-align:right; padding-right:20px;">Разом до сплати:</td>
-                <td style="text-align:right;">{{ $invoice->amountFormatted() }}</td>
+                <td colspan="5" style="text-align:right; padding-right:20px;">Разом до сплати:</td>
+                <td style="text-align:right;">{{ number_format($invoice->amount / 100, 2, ',', ' ') }}</td>
             </tr>
         </tbody>
     </table>
 
-    <div class="payment-box">
-        <div class="payment-box-title">Реквізити для оплати</div>
-        <div class="payment-row">
-            <div class="payment-label">Отримувач:</div>
-            <div class="payment-value">{{ $invoice->recipient_name }}</div>
-        </div>
-        <div class="payment-row">
-            <div class="payment-label">ЄДРПОУ:</div>
-            <div class="payment-value">{{ $invoice->edrpou }}</div>
-        </div>
-        <div class="payment-row">
-            <div class="payment-label">IBAN:</div>
-            <div class="payment-value">{{ $invoice->iban }}</div>
-        </div>
-        <div class="payment-row">
-            <div class="payment-label">Банк:</div>
-            <div class="payment-value">{{ $invoice->bank_name }}</div>
-        </div>
-        @if($invoice->mfo)
-        <div class="payment-row">
-            <div class="payment-label">МФО:</div>
-            <div class="payment-value">{{ $invoice->mfo }}</div>
-        </div>
-        @endif
+    <div style="font-size:13px; margin-bottom:16px; line-height:1.6;">
+        <span style="color:#6b7280;">Всього на суму:</span><br>
+        <strong>{{ $invoice->amountInWords() }}</strong><br>
+        <span style="color:#6b7280;">Без ПДВ</span>
     </div>
 
-    <div class="purpose-box">
-        <div class="section-title">Призначення платежу (вказати точно)</div>
-        <div class="purpose-text">{{ $invoice->payment_purpose }}</div>
-    </div>
-
-    @if($invoice->expires_at)
+@if($invoice->expires_at)
     <div style="color:#6b7280; margin-bottom:20px; font-size:10px;">
         Рахунок дійсний до {{ $invoice->expires_at->format('d.m.Y') }}
     </div>

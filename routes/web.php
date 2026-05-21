@@ -18,6 +18,7 @@ use Livewire\Volt\Volt;
 // ── Public ─────────────────────────────────────────────────────────────────
 Volt::route('/', 'pages.jobs.index')->name('home');
 Route::view('/for-employers', 'pages.for-employers')->name('for-employers');
+Volt::route('/pricing', 'pages.pricing')->name('pricing');
 Route::view('/about', 'pages.about')->name('about');
 Route::view('/offer', 'pages.offer')->name('offer');
 Route::view('/contacts', 'pages.contacts')->name('contacts');
@@ -226,5 +227,17 @@ Route::get('/health', function () {
         'cache'  => $cache,
     ], $status);
 })->name('health');
+
+// ── DEBUG: PDF preview (видалити після перегляду) ───────────────────────────
+Route::get('/debug/pdf-preview', function () {
+    $invoice = \App\Models\Invoice::first();
+    return app(\App\Services\InvoiceService::class)->generatePdf($invoice)->stream('preview.pdf');
+})->name('debug.pdf.preview');
+
+Route::get('/debug/pdf-html', function () {
+    $invoice = \App\Models\Invoice::first();
+    $logoB64 = 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('img/logo/mj-logo.png')));
+    return view('pdf.invoice', ['invoice' => $invoice, 'previewMode' => true, 'logoB64' => $logoB64]);
+});
 
 require __DIR__ . '/auth.php';

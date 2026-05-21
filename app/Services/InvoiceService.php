@@ -19,7 +19,7 @@ class InvoiceService
             $number  = $this->generateNumber();
             $date    = now()->locale('uk')->isoFormat('D MMMM YYYY');
             $tariff  = $planName ? ", тариф {$planName}" : '';
-            $purpose = "Послуги з розміщення інформації на веб-сайті My Job{$tariff}, рахунок № {$number} від {$date} р. без ПДВ";
+            $purpose = "Розміщення інформації на веб-сайті My Job{$tariff}, рахунок № {$number} від {$date} р. без ПДВ";
 
             return Invoice::create([
                 'user_id'         => $user->id,
