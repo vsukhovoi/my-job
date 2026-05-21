@@ -35,15 +35,6 @@ class CompaniesTable
                     ->label('Контактна особа')
                     ->searchable()
                     ->toggleable(),
-                BadgeColumn::make('verification_status')
-                    ->label('Верифікація')
-                    ->formatStateUsing(fn($state) => $state instanceof CompanyVerificationStatus ? $state->label() : $state)
-                    ->colors([
-                        'gray'    => CompanyVerificationStatus::Unverified->value,
-                        'success' => CompanyVerificationStatus::Verified->value,
-                        'danger'  => CompanyVerificationStatus::Rejected->value,
-                    ])
-                    ->toggleable(),
                 TextColumn::make('city.name')
                     ->label('Місто')
                     ->searchable()
@@ -63,6 +54,20 @@ class CompaniesTable
                     ->label('Вебсайт')
                     ->searchable()
                     ->placeholder('—')
+                    ->toggleable(),
+                TextColumn::make('edrpou')
+                    ->label('ЄДРПОУ')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(),
+                BadgeColumn::make('verification_status')
+                    ->label('Верифікація')
+                    ->formatStateUsing(fn($state) => $state instanceof CompanyVerificationStatus ? $state->label() : $state)
+                    ->colors([
+                        'gray'    => CompanyVerificationStatus::Unverified->value,
+                        'success' => CompanyVerificationStatus::Verified->value,
+                        'danger'  => CompanyVerificationStatus::Rejected->value,
+                    ])
                     ->toggleable(),
                 TextColumn::make('slug')
                     ->label('Slug')
