@@ -128,6 +128,11 @@ class VacanciesTable
                         ->whereNotNull('expires_at')
                         ->whereBetween('expires_at', [now(), now()->addHours(72)])
                     ),
+                SelectFilter::make('city_id')
+                    ->label('Місто')
+                    ->relationship('city', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make()->label('Редагувати'),

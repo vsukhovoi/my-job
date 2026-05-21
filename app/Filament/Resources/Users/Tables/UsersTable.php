@@ -56,14 +56,18 @@ class UsersTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('name')
                     ->label("Ім'я")
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('email')
-                    ->label('Електронна пошта')
+                TextColumn::make('company.name')
+                    ->label('Компанія')
                     ->searchable()
-                    ->copyable()
+                    ->placeholder('—')
                     ->toggleable(),
                 TextColumn::make('phone')
                     ->label('Телефон')
@@ -71,21 +75,27 @@ class UsersTable
                     ->copyable()
                     ->placeholder('—')
                     ->toggleable(),
-                TextColumn::make('email_verified_at')
-                    ->label('Пошта підтверджена')
-                    ->dateTime()
-                    ->sortable()
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->copyable()
                     ->toggleable(),
-                TextColumn::make('role')
-                    ->label('Роль')
-                    ->badge()
-                    ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\UserRole ? $state->label() : $state)
+                TextColumn::make('email_verified_at')
+                    ->label('Email верифікація')
+                    ->dateTime('d.m.Y H:i')
+                    ->sortable()
+                    ->placeholder('—')
                     ->toggleable(),
                 TextColumn::make('telegram_id')
                     ->label('Telegram ID')
                     ->numeric()
                     ->sortable()
                     ->placeholder('—')
+                    ->toggleable(),
+                TextColumn::make('role')
+                    ->label('Роль')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\UserRole ? $state->label() : $state)
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Створено')
