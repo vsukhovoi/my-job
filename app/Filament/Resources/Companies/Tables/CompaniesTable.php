@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,7 +80,15 @@ class CompaniesTable
                     ->sortable()
                     ->toggleable(),
             ])
-            ->filters([])
+            ->filters([
+                SelectFilter::make('verification_status')
+                    ->label('Верифікація')
+                    ->options(array_column(
+                        array_map(fn($case) => ['value' => $case->value, 'label' => $case->label()], CompanyVerificationStatus::cases()),
+                        'label',
+                        'value'
+                    )),
+            ])
             ->recordActions([
                 Action::make('verify')
                     ->label('Верифікувати')
