@@ -78,7 +78,7 @@ new #[Layout('layouts.guest')] class extends Component
         @if($role === 'employer')
             Вхід або реєстрація роботодавця
         @else
-            Вхід або реєстрація шукача
+            Вхід або реєстрація кандидата
         @endif
     </h1>
 
@@ -108,7 +108,7 @@ new #[Layout('layouts.guest')] class extends Component
                        background: {{ $role === 'candidate' ? '#2d323b' : 'transparent' }};
                        color: {{ $role === 'candidate' ? '#ffffff' : '#5f6368' }};
                        box-shadow: {{ $role === 'candidate' ? '0 4px 8px rgba(45,50,59,0.2)' : 'none' }};">
-            Шукач
+            Кандидат
         </button>
         <button wire:click="setRole('employer')"
                 style="flex: 1; padding: 10px; font-size: 16px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all 0.3s ease;

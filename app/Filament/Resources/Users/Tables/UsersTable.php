@@ -71,6 +71,11 @@ class UsersTable
                     ->searchable()
                     ->placeholder('—')
                     ->toggleable(),
+                TextColumn::make('city.name')
+                    ->label('Місто')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(),
                 TextColumn::make('phone')
                     ->label('Телефон')
                     ->searchable()
