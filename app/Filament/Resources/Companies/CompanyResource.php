@@ -23,6 +23,7 @@ class CompanyResource extends Resource
     protected static ?string $navigationLabel  = 'Компанії';
     protected static ?string $modelLabel       = 'Компанія';
     protected static ?string $pluralModelLabel = 'Компанії';
+    protected static ?int    $navigationSort   = 51;
 
     public static function form(Schema $schema): Schema
     {

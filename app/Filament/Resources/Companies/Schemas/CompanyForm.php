@@ -53,6 +53,10 @@ class CompanyForm
                     ->label('Опис')
                     ->required()
                     ->columnSpanFull(),
+                TextInput::make('edrpou')
+                    ->label('ЄДРПОУ')
+                    ->maxLength(8)
+                    ->placeholder('12345678'),
                 TextInput::make('website')
                     ->label('Вебсайт')
                     ->prefix('https://')

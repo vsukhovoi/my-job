@@ -12,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +30,10 @@ class CompaniesTable
                     ->label('Назва')
                     ->searchable()
                     ->sortable()
+                    ->toggleable(),
+                TextColumn::make('user.name')
+                    ->label('Контактна особа')
+                    ->searchable()
                     ->toggleable(),
                 BadgeColumn::make('verification_status')
                     ->label('Верифікація')
@@ -51,10 +54,6 @@ class CompaniesTable
                     ->searchable()
                     ->placeholder('—')
                     ->toggleable(),
-                TextColumn::make('user.name')
-                    ->label('Контактна особа')
-                    ->searchable()
-                    ->toggleable(),
                 TextColumn::make('user.email')
                     ->label('E-mail')
                     ->searchable()
@@ -64,10 +63,6 @@ class CompaniesTable
                     ->label('Вебсайт')
                     ->searchable()
                     ->placeholder('—')
-                    ->toggleable(),
-                ImageColumn::make('logo')
-                    ->label('Логотип')
-                    ->circular()
                     ->toggleable(),
                 TextColumn::make('slug')
                     ->label('Slug')
