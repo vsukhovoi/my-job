@@ -46,7 +46,7 @@ new #[Layout('layouts.guest')] class extends Component
     <form wire:submit="register">
 
         {{-- Role switcher --}}
-        <div style="display: inline-flex; gap: 12px; width: 100%; background: #e8eaed;
+        <div class="role-switcher" style="display: inline-flex; gap: 12px; width: 340px; background: #e8eaed;
              border-radius: 10px; padding: 4px; margin-bottom: 20px;">
             <button type="button" wire:click="setRole('candidate')"
                     style="flex: 1; padding: 10px; font-size: 16px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all 0.3s ease;
