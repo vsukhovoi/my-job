@@ -560,7 +560,7 @@ new #[Layout('layouts.app')] class extends Component
                             <a href="{{ route('jobs.show', $vacancy) }}"
                                target="_blank"
                                class="mj-employer-action mj-employer-action--ghost">
-                                👁 Вигляд для шукача
+                                👁 Вигляд для кандидата
                             </a>
                         @else
                             <div class="mj-apply-notice">

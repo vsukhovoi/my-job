@@ -98,7 +98,7 @@ new class extends Component
                 <span class="text-2xl leading-none">⏱</span>
                 <div>
                     <p class="font-semibold text-sm text-gray-900 dark:text-gray-100">Економія часу</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Шукачі одразу бачать ваші переваги та умови, що відсіює нерелевантних кандидатів.</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Кандидати одразу бачать ваші переваги та умови, що відсіює нерелевантних кандидатів.</p>
                 </div>
             </li>
         </ul>

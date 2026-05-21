@@ -41,7 +41,7 @@
 
             {{-- Left: user name --}}
             <div class="shrink-0">
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-0.5">Кабінет шукача</p>
+                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-0.5">Кабінет кандидата</p>
                 <h1 class="seeker-header-title text-xl font-extrabold text-gray-900 leading-tight m-0">
                     {{ $user->name }}
                 </h1>
