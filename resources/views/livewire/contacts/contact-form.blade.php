@@ -84,7 +84,7 @@ new class extends Component {
                 </svg>
             </div>
             <h3 class="text-lg font-medium mb-1">Звернення надіслано!</h3>
-            <p class="text-sm text-gray-500">Ми отримали ваше повідомлення і відповімо протягом 1 робочого дня.</p>
+            <p class="text-sm text-gray-500">Ми отримали ваше повідомлення і відповімо протягом 1 робочого дня на <strong>{{ $contact }}</strong>.</p>
         </div>
     @else
         <form wire:submit="submit" novalidate>
