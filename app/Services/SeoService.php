@@ -18,14 +18,14 @@ final class SeoService
     public function forHome(): array
     {
         return Cache::remember('seo:home', self::CACHE_TTL, function (): array {
-            $title = config('app.name') . ' — Find Jobs in Ukraine';
+            $title = config('app.name') . ' — Пошук роботи в Україні';
 
             return [
                 'title'          => $title,
-                'description'    => 'Search thousands of job vacancies across Ukraine. Filter by category, employment type, and salary.',
+                'description'    => 'Тисячі вакансій по всій Україні. Знайдіть роботу в IT, продажах, медицині, маркетингу та інших сферах. Фільтр за містом, зарплатою та типом зайнятості.',
                 'og_title'       => $title,
-                'og_description' => 'Find your next job in Ukraine. IT, Sales, Marketing, Healthcare and more.',
-                'og_image'       => asset('images/og-default.jpg'),
+                'og_description' => 'Тисячі вакансій по всій Україні — IT, продажі, маркетинг, медицина та інші сфери.',
+                'og_image'       => asset('img/logo/mj-logo-1300x1300.webp'),
                 'canonical'      => url('/'),
             ];
         });
@@ -46,9 +46,9 @@ final class SeoService
             return [
                 'title'          => $title,
                 'description'    => $salary . $description,
-                'og_title'       => "{$vacancy->title} at {$vacancy->company->name}",
+                'og_title'       => "{$vacancy->title} — {$vacancy->company->name}",
                 'og_description' => $description,
-                'og_image'       => $vacancy->company->logo ?? asset('images/og-default.jpg'),
+                'og_image'       => $vacancy->company->logo_url ?? asset('img/logo/mj-logo-1300x1300.webp'),
                 'canonical'      => url("/jobs/{$vacancy->slug}"),
             ];
         });

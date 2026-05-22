@@ -3,17 +3,10 @@
 
     <url>
         <loc>{{ url('/') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
-
-    @foreach($categories as $category)
-    <url>
-        <loc>{{ url('/?categoryId=' . $category->id) }}</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    @endforeach
 
     @foreach($vacancies as $vacancy)
     <url>

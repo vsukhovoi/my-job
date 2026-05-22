@@ -49,10 +49,9 @@ Volt::route('/jobs/{vacancy:slug}', 'pages.jobs.show')->name('jobs.show');
 // Sitemap (cached 24 h)
 Route::get('/sitemap.xml', function () {
     $xml = Cache::remember('sitemap', 86400, function () {
-        $vacancies  = Vacancy::where('is_active', true)->get(['slug', 'updated_at']);
-        $categories = Category::orderBy('position')->get(['id', 'updated_at']);
+        $vacancies = Vacancy::where('is_active', true)->get(['slug', 'updated_at']);
 
-        return response()->view('sitemap', compact('vacancies', 'categories'))->getContent();
+        return response()->view('sitemap', compact('vacancies'))->getContent();
     });
 
     return response($xml)->header('Content-Type', 'application/xml');

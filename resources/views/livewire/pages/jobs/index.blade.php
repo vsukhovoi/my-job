@@ -115,6 +115,25 @@ new #[Layout('layouts.app')] class extends Component
     }
 }; ?>
 
+@php $seo = app(\App\Services\SeoService::class)->forHome(); @endphp
+@section('seo_title', $seo['title'])
+@section('seo_description', $seo['description'])
+@section('seo_canonical')
+<link rel="canonical" href="{{ $seo['canonical'] }}">
+@endsection
+@section('seo_og')
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ $seo['og_title'] }}">
+<meta property="og:description" content="{{ $seo['og_description'] }}">
+<meta property="og:url" content="{{ $seo['canonical'] }}">
+<meta property="og:image" content="{{ $seo['og_image'] }}">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $seo['og_title'] }}">
+<meta name="twitter:description" content="{{ $seo['og_description'] }}">
+<meta name="twitter:image" content="{{ $seo['og_image'] }}">
+@endsection
+
 <div x-data="{ filtersOpen: false }" class="seeker-dashboard-bg dark:bg-gray-900" style="min-height: 100vh;">
 
     {{-- Hero / Search --}}
