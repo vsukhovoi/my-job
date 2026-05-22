@@ -121,9 +121,11 @@ class ResumeTest extends TestCase
         $status = $this->resume->getStepperStatus();
 
         $this->assertTrue($status['personal_info']);
-        $this->assertFalse($status['email']);
+        $this->assertTrue($status['auth']);
         $this->assertFalse($status['experience']);
         $this->assertFalse($status['skills']);
+        $this->assertArrayHasKey('location', $status);
+        $this->assertArrayHasKey('notifications', $status);
     }
 
     #[Test]

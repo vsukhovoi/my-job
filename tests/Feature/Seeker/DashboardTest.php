@@ -57,7 +57,7 @@ class DashboardTest extends TestCase
     {
         $this->actingAs($this->candidate)
             ->get('/dashboard/seeker')
-            ->assertSee('Кабінет шукача');
+            ->assertSee('Знайти вакансії');
     }
 
     #[Test]

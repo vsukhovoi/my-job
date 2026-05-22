@@ -15,6 +15,7 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 
 class CompaniesTable
@@ -88,6 +89,11 @@ class CompaniesTable
                         'label',
                         'value'
                     )),
+                SelectFilter::make('city_id')
+                    ->label('Місто')
+                    ->relationship('city', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 Action::make('verify')

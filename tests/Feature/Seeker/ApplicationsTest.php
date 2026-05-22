@@ -72,7 +72,7 @@ class ApplicationsTest extends TestCase
 
         Volt::test('pages.seeker.applications')
             ->set('filterStatus', 'interview')
-            ->assertSee('Співбесіда');
+            ->assertSee("Інтерв'ю");
     }
 
     #[Test]

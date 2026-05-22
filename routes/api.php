@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/mono/webhook', \App\Http\Controllers\Api\MonobankWebhookController::class)
     ->name('mono.webhook');
 
+Route::post('/telegram/webhook/callback', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'callback'])
+    ->name('telegram.webhook.callback')
+    ->middleware('throttle:60,1');
+
 Route::prefix('telegram/auth')->group(function (): void {
     Route::post('/init', [TelegramAuthController::class, 'init'])->middleware('throttle:20,1');
     Route::get('/status/{token}', [TelegramAuthController::class, 'status'])->middleware('throttle:120,1');

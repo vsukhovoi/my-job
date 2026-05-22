@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude auth *)",
+      "WebFetch(domain:myjob.co.ua)",
+      "Bash(php artisan *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(curl -s http://localhost/my-job/)",
+      "Bash(curl -s http://my-job.test/)",
+      "Bash(curl -s http://my-job.test/jobs/pharmacist-28708)"
+    ]
+  }
+}

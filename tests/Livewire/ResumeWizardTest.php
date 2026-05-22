@@ -116,7 +116,7 @@ class ResumeWizardTest extends TestCase
         Livewire::actingAs($this->user)
             ->test(ResumeWizard::class, ['resume' => $this->resume])
             ->call('publishResume')
-            ->assertDispatched('resume-published');
+            ->assertRedirect(route('seeker.resumes'));
 
         $this->assertEquals('published', $this->resume->fresh()->status);
     }

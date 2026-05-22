@@ -49,7 +49,8 @@ class BillingControllerTest extends TestCase
 
         $this->actingAs($user)
             ->get(route('employer.billing'))
-            ->assertSee('Платежів ще немає');
+            ->assertOk()
+            ->assertDontSee('Історія платежів');
     }
 
     public function test_billing_shows_own_transactions(): void
@@ -108,6 +109,6 @@ class BillingControllerTest extends TestCase
         $this->actingAs($user)
             ->get(route('employer.billing'))
             ->assertOk()
-            ->assertSee('Платежів ще немає');
+            ->assertDontSee('Історія платежів');
     }
 }

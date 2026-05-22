@@ -280,6 +280,6 @@ class ResumeWizardControllerTest extends TestCase
 
         $response->assertOk();
         $this->assertTrue($response->json('data.personal_info'));
-        $this->assertFalse($response->json('data.email'));
+        $this->assertTrue($response->json('data.auth'));
     }
 }

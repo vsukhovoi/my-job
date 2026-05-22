@@ -46,6 +46,17 @@ Route::get('/interview/{token}/cancel', function (string $token, InterviewServic
 })->name('interview.cancel');
 Volt::route('/jobs/{vacancy:slug}', 'pages.jobs.show')->name('jobs.show');
 
+// ── Async Interview (deep links для Telegram-кнопок) ────────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::get('/interview-request/{id}/respond', function (int $id) {
+        return redirect()->route('seeker.interviews');
+    })->name('interview.respond');
+
+    Route::get('/interview-request/{id}/view', function (int $id) {
+        return redirect()->route('employer.candidates');
+    })->name('interview.view');
+});
+
 // Sitemap (cached 24 h)
 Route::get('/sitemap.xml', function () {
     $xml = Cache::remember('sitemap', 86400, function () {

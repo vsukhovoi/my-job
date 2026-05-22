@@ -35,5 +35,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="TELEGRAM_CALLBACK_SECRET" value="test-callback-secret-for-phpunit"/>
+        <env name="TELEGRAM_WEBHOOK_TOKEN" value="test-webhook-token-for-phpunit"/>
     </php>
 </phpunit>

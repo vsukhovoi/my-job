@@ -30,6 +30,7 @@ class VacancyToggleTest extends TestCase
             'name'        => 'ТОВ Тест',
             'logo'        => 'logos/test.png',
             'description' => 'Опис компанії для тесту повноти профілю.',
+            'edrpou'      => '12345678',
             'website'     => 'https://example.com',
             'location'    => 'Київ',
         ]);

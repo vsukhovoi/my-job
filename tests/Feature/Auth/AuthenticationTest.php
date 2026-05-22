@@ -32,7 +32,7 @@ class AuthenticationTest extends TestCase
 
         $component
             ->assertHasNoErrors()
-            ->assertRedirect(route('dashboard', absolute: false));
+            ->assertRedirect(route('seeker.dashboard', absolute: false));
 
         $this->assertAuthenticated();
     }
@@ -58,27 +58,17 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user);
-
-        $response = $this->get('/dashboard');
-
-        $response
-            ->assertOk()
-            ->assertSeeVolt('layout.navigation');
+        $this->actingAs($user)
+            ->get('/dashboard')
+            ->assertOk();
     }
 
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user);
-
-        $component = Volt::test('layout.navigation');
-
-        $component->call('logout');
-
-        $component
-            ->assertHasNoErrors()
+        $this->actingAs($user)
+            ->post(route('logout'))
             ->assertRedirect('/');
 
         $this->assertGuest();

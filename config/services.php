@@ -68,4 +68,9 @@ return [
         'api_url' => env('TELEGRAM_BOT_API_URL', 'http://localhost:8080'),
     ],
 
+    'telegram' => [
+        'callback_secret' => env('TELEGRAM_CALLBACK_SECRET'),
+        'webhook_token'   => env('TELEGRAM_WEBHOOK_TOKEN'),
+    ],
+
 ];

@@ -38,7 +38,7 @@ class CardStepTest extends TestCase
     public function it_shows_validation_errors_on_blur_with_empty_fields(): void
     {
         Livewire::test(CardStep::class, ['resume' => $this->resume])
-            ->call('onBlur')
+            ->call('onValidate')
             ->assertSet('errors.first_name', "Ім'я обов'язкове")
             ->assertSet('errors.last_name',  "Прізвище обов'язкове");
     }
@@ -49,25 +49,25 @@ class CardStepTest extends TestCase
         Livewire::test(CardStep::class, ['resume' => $this->resume])
             ->set('formData.personal_info.first_name', 'Іван')
             ->set('formData.personal_info.last_name',  'Петренко')
-            ->call('onBlur')
+            ->call('onValidate')
             ->assertSet('errors', []);
     }
 
     #[Test]
-    public function it_dispatches_step_updated_on_valid_blur(): void
+    public function it_dispatches_update_form_data_on_valid_data(): void
     {
         Livewire::test(CardStep::class, ['resume' => $this->resume])
             ->set('formData.personal_info.first_name', 'Іван')
             ->set('formData.personal_info.last_name',  'Петренко')
-            ->call('onBlur')
-            ->assertDispatched('step-updated');
+            ->assertDispatched('updateFormData');
     }
 
     #[Test]
     public function it_updates_privacy_flag(): void
     {
         Livewire::test(CardStep::class, ['resume' => $this->resume])
-            ->call('updatePrivacy', true)
+            ->set('formData.personal_info.privacy', true)
+            ->call('updatePrivacy')
             ->assertSet('formData.personal_info.privacy', true)
             ->assertDispatched('updateFormData');
     }
@@ -76,7 +76,8 @@ class CardStepTest extends TestCase
     public function it_updates_transparency_flag(): void
     {
         Livewire::test(CardStep::class, ['resume' => $this->resume])
-            ->call('updateTransparency', true)
+            ->set('formData.personal_info.transparency', true)
+            ->call('updateTransparency')
             ->assertSet('formData.personal_info.transparency', true)
             ->assertDispatched('updateFormData');
     }

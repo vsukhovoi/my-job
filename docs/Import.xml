@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<ORDERS>
+  <ORDER>
+    <DATE>22.05.2026</DATE>
+    <ID>1230</ID>
+    <CUSTOMER>
+      <CUST_ID>1002</CUST_ID>
+      <CUST_NAME>ФИО</CUST_NAME>
+      <CUST_TEL>067 333 77 88</CUST_TEL>
+      <CUST_ADR>Киев, ул. Киевская 100</CUST_ADR>
+      <CUST_EMAIL>myname@ukr.net</CUST_EMAIL>
+    </CUSTOMER>
+    <TABLE_PRODUCT>
+      <PRODUCT>
+        <ID>101</ID>
+        <NAME>Товар А</NAME>
+        <QUANTITY>10</QUANTITY>
+        <PRICE>150.00</PRICE>
+        <FULLPATH>Компьютеры/Устройства/Мыши</FULLPATH>
+      </PRODUCT>
+      <PRODUCT>
+        <ID>102</ID>
+        <NAME>Товар Б</NAME>
+        <QUANTITY>12</QUANTITY>
+        <PRICE>140.00</PRICE>
+        <FULLPATH>Техника/Видео/DVD</FULLPATH>
+      </PRODUCT>
+      <PRODUCT>
+        <ID>103</ID>
+        <NAME>Товар В</NAME>
+        <QUANTITY>25</QUANTITY>
+        <PRICE>50.00</PRICE>
+        <FULLPATH>Техника/Видео/Телевизоры</FULLPATH>
+      </PRODUCT>
+    </TABLE_PRODUCT>
+  </ORDER>
+</ORDERS>

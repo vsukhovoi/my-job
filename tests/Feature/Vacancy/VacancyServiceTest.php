@@ -31,8 +31,15 @@ class VacancyServiceTest extends TestCase
 
     private function makeEmployer(): array
     {
-        $employer = User::factory()->create(['role' => UserRole::Employer]);
-        $company  = Company::factory()->create(['user_id' => $employer->id]);
+        $employer = User::factory()->create(['role' => UserRole::Employer, 'phone' => '+380991234567']);
+        $company  = Company::factory()->create([
+            'user_id'     => $employer->id,
+            'logo'        => 'logos/test.png',
+            'description' => 'Опис компанії для тесту публікації вакансій.',
+            'edrpou'      => '12345678',
+            'website'     => 'https://example.com',
+            'location'    => 'Київ',
+        ]);
 
         return [$employer, $company];
     }
