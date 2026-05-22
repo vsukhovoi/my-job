@@ -6,9 +6,10 @@ use App\Enums\ApplicationStatus;
 use App\Events\ApplicationStatusChanged;
 use App\Models\InterviewRequest;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new class extends Component
+new #[Layout('layouts.app')] class extends Component
 {
     public int $interviewRequestId;
 

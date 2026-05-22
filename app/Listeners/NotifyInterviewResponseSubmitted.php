@@ -28,7 +28,7 @@ class NotifyInterviewResponseSubmitted implements ShouldQueue
 
         $candidateName = $response->candidate?->name ?? 'Кандидат';
         $vacancyTitle  = $response->interviewRequest->application->vacancy->title ?? '';
-        $viewUrl       = route('interview.view', $response->id);
+        $viewUrl       = route('interview.view', $response->interviewRequest->id);
 
         $text = "✅ <b>Кандидат відповів на співбесіду</b>\n\n"
             . "<b>{$candidateName}</b> надіслав(ла) відповіді на питання асинхронної співбесіди"

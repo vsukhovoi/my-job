@@ -7,9 +7,10 @@ use App\Models\InterviewResponse;
 use App\Services\AsyncInterviewService;
 use Carbon\Carbon;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new class extends Component
+new #[Layout('layouts.app')] class extends Component
 {
     public int $interviewRequestId;
 
