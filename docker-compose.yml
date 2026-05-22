@@ -118,6 +118,26 @@ services:
     networks:
       - backend
 
+  # ── Telegram Bot (Python) ────────────────────────────────────────────────
+  bot:
+    build: ./bot
+    container_name: myjob-bot
+    restart: unless-stopped
+    env_file:
+      - ./bot/.env
+    depends_on:
+      - app
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - backend
+      - aigent_backend
+
 volumes:
   db_data:
   redis_data:
