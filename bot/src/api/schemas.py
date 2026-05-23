@@ -11,8 +11,7 @@ class InlineButton(BaseModel):
     url: str | None = None
 
 
-class InlineKeyboard(BaseModel):
-    inline_keyboard: list[list[InlineButton]]
+InlineKeyboard = list[list[InlineButton]]
 
 
 # ── Request schemas ────────────────────────────────────────────────────────

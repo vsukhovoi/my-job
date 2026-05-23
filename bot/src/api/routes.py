@@ -74,7 +74,7 @@ async def send_message_with_keyboard(body: SendMessageWithKeyboardRequest) -> Se
             )
             for btn in row
         ]
-        for row in body.inline_keyboard.inline_keyboard
+        for row in body.inline_keyboard
     ])
     try:
         msg = await get_bot().send_message(
@@ -115,7 +115,7 @@ async def edit_message(body: EditMessageRequest) -> EditMessageResponse:
                 )
                 for btn in row
             ]
-            for row in body.inline_keyboard.inline_keyboard
+            for row in body.inline_keyboard
         ])
     try:
         await get_bot().edit_message_text(
