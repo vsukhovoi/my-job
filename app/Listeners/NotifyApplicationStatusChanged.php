@@ -6,7 +6,9 @@ namespace App\Listeners;
 
 use App\Enums\ApplicationStatus;
 use App\Events\ApplicationStatusChanged;
+use App\Mail\ApplicationStatusChangedMail;
 use App\Services\TelegramNotifier;
+use Illuminate\Support\Facades\Mail;
 
 class NotifyApplicationStatusChanged
 {
@@ -17,18 +19,23 @@ class NotifyApplicationStatusChanged
     public function handle(ApplicationStatusChanged $event): void
     {
         $candidate = $event->application->user;
+        $newStatus = $event->newStatus;
 
-        if (! $candidate->prefersTelegram()) {
+        if (! in_array($newStatus, [ApplicationStatus::Interview, ApplicationStatus::Rejected], true)) {
             return;
         }
 
-        $text = $this->resolveText($event);
-
-        if ($text === null) {
+        if ($candidate->prefersTelegram()) {
+            $text = $this->resolveText($event);
+            if ($text !== null) {
+                $this->notifier->send((string) $candidate->telegram_id, $text);
+            }
             return;
         }
 
-        $this->notifier->send((string) $candidate->telegram_id, $text);
+        Mail::to($candidate->email)->queue(
+            new ApplicationStatusChangedMail($event->application, $newStatus)
+        );
     }
 
     private function resolveText(ApplicationStatusChanged $event): ?string
