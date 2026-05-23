@@ -23,7 +23,7 @@ class TelegramNotifier
     {
         try {
             $response = Http::timeout(5)->withToken($this->botApiToken)->post("{$this->botApiUrl}/send-message", [
-                'chat_id' => $chatId,
+                'chat_id' => (int) $chatId,
                 'text'    => $text,
             ]);
 
