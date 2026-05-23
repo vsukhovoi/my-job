@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\Application;
-use App\Services\TelegramService;
+use App\Services\Telegram\CallbackDataSigner;
+use App\Services\Telegram\UrlGenerators\ApplicationUrlGenerator;
+use App\Services\TelegramNotifier;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -19,15 +21,52 @@ final class SendNewApplicationNotification implements ShouldQueue
         public readonly int $applicationId,
     ) {}
 
-    public function handle(TelegramService $service): void
+    public function handle(TelegramNotifier $notifier, CallbackDataSigner $signer, ApplicationUrlGenerator $urls): void
     {
         $application = Application::with(['vacancy.company.user', 'user'])
             ->find($this->applicationId);
 
-        if (!$application) {
+        if (! $application) {
             return;
         }
 
-        $service->notifyEmployer($application);
+        $employer = $application->vacancy->company->user;
+
+        if (! $employer->prefersTelegram()) {
+            return;
+        }
+
+        $notifier->sendMessageWithKeyboard(
+            telegramId:     (int) $employer->telegram_id,
+            text:           $this->formatMessage($application),
+            inlineKeyboard: $this->buildKeyboard($application, $signer, $urls),
+        );
+    }
+
+    private function formatMessage(Application $application): string
+    {
+        return sprintf(
+            "📨 <b>Нова заявка на вашу вакансію</b>\n\nКандидат: %s\nВакансія: %s\nРезюме: %s",
+            e($application->user->name),
+            e($application->vacancy->title),
+            $application->resume_url ?: 'не додано',
+        );
+    }
+
+    /**
+     * @return array<array<array{text: string, url?: string, callback_data?: string}>>
+     */
+    private function buildKeyboard(Application $application, CallbackDataSigner $signer, ApplicationUrlGenerator $urls): array
+    {
+        return [
+            [
+                ['text' => '📄 Переглянути CV',          'url'           => $urls->cvViewUrl($application)],
+                ['text' => '✅ Запросити на співбесіду', 'callback_data' => $signer->sign('invite', 'application', $application->id)],
+            ],
+            [
+                ['text' => '❌ Відхилити', 'callback_data' => $signer->sign('reject', 'application', $application->id)],
+                ['text' => '💬 Написати', 'url'           => $urls->chatUrl($application)],
+            ],
+        ];
     }
 }

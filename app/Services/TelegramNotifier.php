@@ -15,8 +15,8 @@ class TelegramNotifier
 
     public function __construct()
     {
-        $this->botApiUrl   = config('services.telegram_bot.api_url');
-        $this->botApiToken = config('services.telegram_bot.api_token');
+        $this->botApiUrl   = (string) config('services.telegram_bot.api_url', '');
+        $this->botApiToken = (string) config('services.telegram_bot.api_token', '');
     }
 
     public function send(string $chatId, string $text): bool

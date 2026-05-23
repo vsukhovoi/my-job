@@ -105,7 +105,7 @@ async def send_message_with_keyboard(body: SendMessageWithKeyboardRequest) -> Se
 async def edit_message(body: EditMessageRequest) -> EditMessageResponse:
     t0 = time.monotonic()
     markup = None
-    if body.inline_keyboard:
+    if body.inline_keyboard is not None:
         markup = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
