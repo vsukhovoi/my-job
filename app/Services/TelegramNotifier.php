@@ -11,16 +11,18 @@ use Illuminate\Support\Facades\Log;
 class TelegramNotifier
 {
     private string $botApiUrl;
+    private string $botApiToken;
 
     public function __construct()
     {
-        $this->botApiUrl = config('services.telegram_bot.api_url');
+        $this->botApiUrl   = config('services.telegram_bot.api_url');
+        $this->botApiToken = config('services.telegram_bot.api_token');
     }
 
     public function send(string $chatId, string $text): bool
     {
         try {
-            $response = Http::timeout(5)->post("{$this->botApiUrl}/send-message", [
+            $response = Http::timeout(5)->withToken($this->botApiToken)->post("{$this->botApiUrl}/send-message", [
                 'chat_id' => $chatId,
                 'text'    => $text,
             ]);
@@ -46,7 +48,7 @@ class TelegramNotifier
     public function sendMessageWithKeyboard(int $telegramId, string $text, array $inlineKeyboard): TelegramMessageResult
     {
         try {
-            $response = Http::timeout(5)->post("{$this->botApiUrl}/send-message-with-keyboard", [
+            $response = Http::timeout(5)->withToken($this->botApiToken)->post("{$this->botApiUrl}/send-message-with-keyboard", [
                 'chat_id'         => $telegramId,
                 'text'            => $text,
                 'parse_mode'      => 'HTML',
@@ -90,7 +92,7 @@ class TelegramNotifier
                 $payload['inline_keyboard'] = $inlineKeyboard;
             }
 
-            $response = Http::timeout(5)->post("{$this->botApiUrl}/edit-message", $payload);
+            $response = Http::timeout(5)->withToken($this->botApiToken)->post("{$this->botApiUrl}/edit-message", $payload);
 
             if (! $response->successful()) {
                 Log::warning('TelegramNotifier::editMessageText failed', [
@@ -111,7 +113,7 @@ class TelegramNotifier
     public function answerCallbackQuery(string $callbackQueryId, ?string $text = null, bool $showAlert = false): bool
     {
         try {
-            $response = Http::timeout(5)->post("{$this->botApiUrl}/answer-callback", [
+            $response = Http::timeout(5)->withToken($this->botApiToken)->post("{$this->botApiUrl}/answer-callback", [
                 'callback_query_id' => $callbackQueryId,
                 'text'              => $text,
                 'show_alert'        => $showAlert,

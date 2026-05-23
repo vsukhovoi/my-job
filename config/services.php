@@ -65,7 +65,8 @@ return [
     ],
 
     'telegram_bot' => [
-        'api_url' => env('TELEGRAM_BOT_API_URL', 'http://localhost:8080'),
+        'api_url'   => env('TELEGRAM_BOT_API_URL', 'http://localhost:8080'),
+        'api_token' => env('TELEGRAM_BOT_API_TOKEN'),
     ],
 
     'telegram' => [
