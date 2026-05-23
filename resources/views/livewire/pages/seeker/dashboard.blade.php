@@ -121,8 +121,8 @@ new #[Layout('layouts.app')] class extends Component
                     <div class="px-6 py-4 border-b border-gray-50 last:border-b-0">
                         <div class="flex items-start justify-between gap-4">
                             <div class="min-w-0">
-                                <p class="font-semibold text-gray-900 truncate">{{ $interview->application->vacancy->title }}</p>
-                                <p class="text-sm text-gray-500">{{ $interview->application->vacancy->company->name }}</p>
+                                <p class="font-semibold text-gray-900 truncate">{{ $interview->application->vacancy?->title ?? '(вакансія видалена)' }}</p>
+                                <p class="text-sm text-gray-500">{{ $interview->application->vacancy?->company?->name ?? '' }}</p>
                             </div>
                             <div class="text-right shrink-0">
                                 <p class="text-sm font-semibold text-gray-800">{{ $interview->scheduled_at->format('d.m.Y') }}</p>
@@ -155,8 +155,8 @@ new #[Layout('layouts.app')] class extends Component
                        class="block px-6 py-4 border-b border-gray-50 last:border-b-0 hover:bg-gray-50 transition-colors">
                         <div class="flex items-center justify-between gap-4">
                             <div class="min-w-0">
-                                <p class="font-medium text-gray-900 truncate">{{ $app->vacancy->title }}</p>
-                                <p class="text-sm text-gray-500">{{ $app->vacancy->company->name }}</p>
+                                <p class="font-medium text-gray-900 truncate">{{ $app->vacancy?->title ?? '(вакансія видалена)' }}</p>
+                                <p class="text-sm text-gray-500">{{ $app->vacancy?->company?->name ?? '' }}</p>
                             </div>
                             @php
                                 $colors = [
