@@ -197,6 +197,9 @@ new #[Layout('layouts.app')] class extends Component
                         Експорт PDF
                     </a>
 
+                    {{-- File attachment --}}
+                    @livewire('seeker.resume.file-upload', ['resume' => $resume], key('file-upload-' . $resume->id))
+
                     {{-- Delete --}}
                     <button
                         wire:click="deleteResume({{ $resume->id }})"

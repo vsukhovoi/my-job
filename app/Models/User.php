@@ -110,4 +110,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->notification_channel === \App\Enums\NotificationChannel::Telegram
             && ! empty($this->telegram_id);
     }
+
+    /** Phase 2: implement when CvAccess addon purchase tracking is available */
+    public function hasActiveCvAccess(): bool
+    {
+        return false;
+    }
 }

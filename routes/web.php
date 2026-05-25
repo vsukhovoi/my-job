@@ -166,6 +166,10 @@ Route::prefix('resumes')
             // PDF export — підключити бібліотеку (наприклад, barryvdh/laravel-dompdf) у майбутньому
             abort(501, 'Експорт PDF ще не реалізовано');
         })->name('export.pdf');
+
+        Route::get('/{resume}/file/download', [\App\Http\Controllers\Seeker\ResumeFileController::class, 'download'])
+            ->middleware('auth')
+            ->name('file.download');
     });
 
 Volt::route('/resumes/{resume}', 'pages.resumes.show')->name('resumes.show');

@@ -27,16 +27,22 @@ class Resume extends Model
         'notifications',
         'additional_info',
         'last_saved_at',
+        'attached_file_path',
+        'attached_file_original_name',
+        'attached_file_size',
+        'attached_file_mime_type',
+        'attached_file_uploaded_at',
     ];
 
     protected $casts = [
-        'personal_info'   => 'array',
-        'location'        => 'array',
-        'notifications'   => 'array',
-        'additional_info' => 'array',
-        'last_saved_at'   => 'datetime',
-        'created_at'      => 'datetime',
-        'updated_at'      => 'datetime',
+        'personal_info'           => 'array',
+        'location'                => 'array',
+        'notifications'           => 'array',
+        'additional_info'         => 'array',
+        'last_saved_at'           => 'datetime',
+        'attached_file_uploaded_at' => 'datetime',
+        'created_at'              => 'datetime',
+        'updated_at'              => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -52,6 +58,30 @@ class Resume extends Model
     public function skills(): HasMany
     {
         return $this->hasMany(Skill::class);
+    }
+
+    public function hasAttachedFile(): bool
+    {
+        return !empty($this->attached_file_path);
+    }
+
+    public function getAttachedFileSizeFormatted(): ?string
+    {
+        if (!$this->attached_file_size) {
+            return null;
+        }
+
+        $bytes = $this->attached_file_size;
+
+        if ($bytes < 1024) {
+            return $bytes . ' B';
+        }
+
+        if ($bytes < 1048576) {
+            return round($bytes / 1024, 1) . ' KB';
+        }
+
+        return round($bytes / 1048576, 2) . ' MB';
     }
 
     public function scopePublished($query)
