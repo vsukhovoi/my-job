@@ -3,13 +3,22 @@
 declare(strict_types=1);
 
 use App\Models\Resume;
+use App\Services\ResumeFileService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
 
 new #[Layout('layouts.app')] class extends Component
 {
+    use WithFileUploads;
+
     public ?string $flashMessage = null;
+    public bool $showQuickUploader = false;
+
+    #[Validate('nullable|file|mimes:pdf,doc,docx|max:5120')]
+    public $quickFile = null;
 
     public function mount(): void
     {
@@ -26,6 +35,29 @@ new #[Layout('layouts.app')] class extends Component
             ->withCount('experiences', 'skills')
             ->latest()
             ->get();
+    }
+
+    public function uploadQuickFile(ResumeFileService $service): void
+    {
+        $this->validate(['quickFile' => 'required|file|mimes:pdf,doc,docx|max:5120']);
+
+        $resume = Resume::create([
+            'user_id' => auth()->id(),
+            'title'   => 'Резюме',
+            'status'  => 'draft',
+        ]);
+
+        try {
+            $service->upload($resume, $this->quickFile);
+        } catch (\Exception $e) {
+            $resume->delete();
+            $this->addError('quickFile', $e->getMessage());
+            return;
+        }
+
+        $this->quickFile = null;
+        $this->showQuickUploader = false;
+        unset($this->resumes);
     }
 
     public function toggleStatus(int $resumeId): void
@@ -213,15 +245,72 @@ new #[Layout('layouts.app')] class extends Component
                 </div>
             </div>
         @empty
-            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm px-6 py-16 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm px-6 py-12 text-center">
                 <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-                <p class="text-gray-500 dark:text-gray-400 mb-4">У вас ще немає резюме</p>
-                <a href="{{ route('resumes.create') }}"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition">
-                    Створити перше резюме
-                </a>
+                <p class="text-gray-500 dark:text-gray-400 mb-6">У вас ще немає резюме</p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="{{ route('resumes.create') }}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Створити перше резюме
+                    </a>
+
+                    @if (!$showQuickUploader)
+                        <button wire:click="$set('showQuickUploader', true)"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-700 text-sm font-semibold rounded-xl hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50 transition border border-indigo-200 dark:border-indigo-800">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                            </svg>
+                            Прикріпити файл резюме
+                        </button>
+                    @endif
+                </div>
+
+                @if ($showQuickUploader)
+                    <div class="mt-6 max-w-sm mx-auto text-left space-y-3">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 text-center">PDF, DOC або DOCX · до 5 МБ</p>
+                        <label class="block">
+                            <input type="file"
+                                   wire:model="quickFile"
+                                   accept=".pdf,.doc,.docx"
+                                   class="block w-full text-sm text-gray-600 dark:text-gray-400
+                                          file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0
+                                          file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700
+                                          dark:file:bg-indigo-900/40 dark:file:text-indigo-300
+                                          hover:file:bg-indigo-100 cursor-pointer">
+                        </label>
+
+                        <div wire:loading wire:target="quickFile" class="text-xs text-gray-500 dark:text-gray-400 text-center">
+                            Завантаження...
+                        </div>
+
+                        @error('quickFile')
+                            <p class="text-xs text-red-600 dark:text-red-400 text-center">{{ $message }}</p>
+                        @enderror
+
+                        <div class="flex gap-2 justify-center">
+                            @if ($quickFile)
+                                <button wire:click="uploadQuickFile"
+                                        wire:loading.attr="disabled"
+                                        class="inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-60 transition">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                    </svg>
+                                    Прикріпити файл резюме
+                                </button>
+                            @endif
+                            <button wire:click="$set('showQuickUploader', false)"
+                                    class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition">
+                                Скасувати
+                            </button>
+                        </div>
+                    </div>
+                @endif
             </div>
         @endforelse
 
