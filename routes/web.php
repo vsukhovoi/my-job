@@ -78,9 +78,13 @@ Route::get('/auth/{provider}/callback', [\App\Http\Controllers\SocialAuthControl
     ->name('social.callback');
 
 // ── Auth ────────────────────────────────────────────────────────────────────
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth', 'verified'])->get('dashboard', function () {
+    return match (auth()->user()->role) {
+        \App\Enums\UserRole::Employer  => redirect()->route('employer.dashboard'),
+        \App\Enums\UserRole::Candidate => redirect()->route('seeker.dashboard'),
+        default                        => redirect('/admin'),
+    };
+})->name('dashboard');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
