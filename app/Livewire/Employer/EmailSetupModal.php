@@ -92,10 +92,10 @@ final class EmailSetupModal extends Component
             return;
         }
 
-        auth()->user()->update([
-            'email'             => $this->verifiedEmail,
-            'email_verified_at' => now(),
-        ]);
+        $user = auth()->user();
+        $user->email             = $this->verifiedEmail;
+        $user->email_verified_at = now();
+        $user->save();
 
         $this->show = false;
     }
