@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Employer;
 
 use App\Models\EmailVerification;
+use App\Mail\VerificationCodeMail;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
@@ -63,10 +64,7 @@ final class EmailSetupModal extends Component
             ]
         );
 
-        Mail::raw(
-            "Ваш код підтвердження для MyJob: {$code}\n\nКод дійсний 10 хвилин.",
-            fn ($m) => $m->to($this->verifiedEmail)->subject('Підтвердження email — MyJob')
-        );
+        Mail::to($this->verifiedEmail)->send(new VerificationCodeMail($code));
 
         $this->step = 'code';
         $this->resetErrorBag();
