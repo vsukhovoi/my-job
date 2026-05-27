@@ -116,7 +116,7 @@
             padding: 6px 14px;
             font-size: 0.95rem;
         }
-        .site-header__auth {
+        .site-header__auth--logged-in {
             display: none;
         }
     }
@@ -340,7 +340,7 @@
         </button>
 
         {{-- Auth --}}
-        <div class="site-header__auth">
+        <div class="site-header__auth @auth site-header__auth--logged-in @endauth">
             @auth
                 <span style="color:#ffffff; font-weight:600;">
                     {{ auth()->user()->name }}
