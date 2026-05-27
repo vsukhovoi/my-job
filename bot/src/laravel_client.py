@@ -20,3 +20,15 @@ async def post(path: str, json: dict) -> httpx.Response:
     logger.debug("Laravel POST %s payload=%s", path, list(json.keys()))
     async with httpx.AsyncClient(timeout=10.0) as client:
         return await client.post(url, json=json, headers=headers)
+
+
+async def get(path: str) -> httpx.Response:
+    """GET from Laravel and return the response.
+
+    Raises httpx.HTTPError on network failure.
+    """
+    url = f"{settings.LARAVEL_API_URL}{path}"
+    headers = {"X-Telegram-Webhook-Token": settings.LARAVEL_WEBHOOK_TOKEN}
+    logger.debug("Laravel GET %s", path)
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        return await client.get(url, headers=headers)

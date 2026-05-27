@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from telegram import KeyboardButton, ReplyKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 
 from src import auth_state, laravel_client
 from src.telegram_client import get_bot
@@ -42,6 +42,47 @@ async def handle_start(chat_id: int, user_id: int, text: str) -> None:
             chat_id=chat_id,
             text=_AUTH_PROMPT,
             reply_markup=reply_kb,
+        )
+        return
+
+    if payload.startswith("job_"):
+        vacancy_id_str = payload[len("job_"):]
+        if not vacancy_id_str.isdigit():
+            await get_bot().send_message(chat_id=chat_id, text="❌ Вакансія не знайдена.")
+            return
+
+        try:
+            resp = await laravel_client.get(f"/api/vacancies/{vacancy_id_str}")
+        except Exception as exc:
+            logger.error("Job deep link: Laravel call failed vacancy_id=%s error=%s", vacancy_id_str, exc)
+            await get_bot().send_message(
+                chat_id=chat_id,
+                text="❌ Сталася помилка. Спробуйте пізніше.",
+            )
+            return
+
+        if resp.status_code == 404:
+            await get_bot().send_message(
+                chat_id=chat_id,
+                text="❌ Вакансія не знайдена або більше не активна.",
+            )
+            return
+
+        v = resp.json()
+        lines = [f"🏢 <b>{v['title']}</b>", f"🏭 {v['company']}"]
+        if v.get("employment_type"):
+            lines.append(f"💼 {v['employment_type']}")
+        if v.get("salary"):
+            lines.append(f"💰 {v['salary']}")
+
+        keyboard = InlineKeyboardMarkup([[
+            InlineKeyboardButton("🔗 Переглянути вакансію", url=v["url"])
+        ]])
+        await get_bot().send_message(
+            chat_id=chat_id,
+            text="\n".join(lines),
+            parse_mode="HTML",
+            reply_markup=keyboard,
         )
         return
 

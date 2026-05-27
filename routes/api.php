@@ -24,6 +24,38 @@ Route::prefix('telegram/auth')->group(function (): void {
     Route::post('/contact', [TelegramAuthController::class, 'contact'])->middleware('throttle:60,1');
 });
 
+Route::get('/vacancies/{id}', function (int $id) {
+    $vacancy = \App\Models\Vacancy::with('company')
+        ->where('is_active', true)
+        ->find($id);
+
+    if (! $vacancy) {
+        return response()->json(['error' => 'Not found'], 404);
+    }
+
+    $types = collect((array) $vacancy->employment_type)
+        ->map(fn($t) => \App\Enums\EmploymentType::tryFrom($t)?->label() ?? $t)
+        ->join(', ');
+
+    $salary = match (true) {
+        (bool) $vacancy->salary_from && (bool) $vacancy->salary_to =>
+            number_format((int) $vacancy->salary_from, 0, '.', ' ') . ' – ' .
+            number_format((int) $vacancy->salary_to, 0, '.', ' ') . ' ' . $vacancy->currency,
+        (bool) $vacancy->salary_from =>
+            'від ' . number_format((int) $vacancy->salary_from, 0, '.', ' ') . ' ' . $vacancy->currency,
+        default => null,
+    };
+
+    return response()->json([
+        'id'              => $vacancy->id,
+        'title'           => $vacancy->title,
+        'company'         => $vacancy->company->name,
+        'salary'          => $salary,
+        'employment_type' => $types,
+        'url'             => url('/jobs/' . $vacancy->slug),
+    ]);
+})->name('api.vacancies.show');
+
 Route::prefix('cities')->group(function (): void {
     Route::get('/', [CityController::class, 'index']);
     Route::get('/search', [CityController::class, 'search']);
