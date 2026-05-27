@@ -91,6 +91,15 @@ new #[Layout('layouts.app')] class extends Component
         $this->telegramId   = null;
         $this->telegramLink = '';
     }
+
+    public function checkTelegramStatus(): void
+    {
+        $telegramId = auth()->user()->fresh()->telegram_id;
+        if ($telegramId) {
+            $this->telegramId   = (string) $telegramId;
+            $this->telegramLink = '';
+        }
+    }
 }; ?>
 
 <div class="min-h-screen seeker-dashboard-bg dark:bg-gray-900">
@@ -161,7 +170,7 @@ new #[Layout('layouts.app')] class extends Component
                             </button>
                         </div>
                     @elseif($telegramLink)
-                        <div class="mt-3 space-y-2">
+                        <div class="mt-3 space-y-2" wire:poll.3s="checkTelegramStatus">
                             <p class="text-xs text-gray-500 dark:text-gray-400">Перейдіть у бота, щоб завершити прив'язку:</p>
                             <a href="{{ $telegramLink }}" target="_blank"
                                class="flex items-center justify-center gap-2 w-full py-2 bg-[#2AABEE] text-white text-sm font-medium rounded-xl hover:bg-[#229ED9] transition-colors">
