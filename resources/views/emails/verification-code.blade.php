@@ -5,7 +5,7 @@
     <title>Код верифікації</title>
 </head>
 <body style="font-family: Arial, sans-serif; color: #333; padding: 40px;">
-    <h2 style="color: #2563eb; font-size: 18px; white-space: nowrap;">Код верифікації для My Job</h2>
+    <h2 style="color: #2563eb; font-size: 15px;">Код верифікації для My Job</h2>
 
     <p>Ваш код верифікації:</p>
 
