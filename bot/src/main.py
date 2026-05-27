@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from src.api.routes import router
 from src.config import settings
+from src.handlers.alerts import handle_alert_toggle, handle_alerts
 from src.handlers.callbacks import handle_callback
 from src.handlers.commands import handle_start
 from src.handlers.contacts import handle_contact_share
@@ -55,6 +56,8 @@ async def telegram_webhook(secret_path: str, request: Request) -> dict[str, Any]
 
             if text.startswith("/start"):
                 await handle_start(chat_id=chat_id, user_id=user_id, text=text)
+            elif text.startswith("/alerts"):
+                await handle_alerts(chat_id=chat_id, user_id=user_id)
             elif "contact" in msg:
                 contact = msg["contact"]
                 await handle_contact_share(
@@ -66,13 +69,29 @@ async def telegram_webhook(secret_path: str, request: Request) -> dict[str, Any]
                     username=user.get("username"),
                 )
         elif "callback_query" in data:
-            cb = data["callback_query"]
-            await handle_callback(
-                user_id=cb["from"]["id"],
-                message_id=(cb.get("message") or {}).get("message_id"),
-                query_id=cb["id"],
-                data=cb.get("data", ""),
-            )
+            cb       = data["callback_query"]
+            cb_data  = cb.get("data", "")
+            cb_uid   = cb["from"]["id"]
+            cb_chat  = (cb.get("message") or {}).get("chat", {}).get("id") or cb_uid
+            cb_msgid = (cb.get("message") or {}).get("message_id")
+            cb_qid   = cb["id"]
+
+            if cb_data.startswith("alert_toggle:"):
+                category_id = int(cb_data.split(":", 1)[1]) if cb_data.split(":", 1)[1].isdigit() else 0
+                await handle_alert_toggle(
+                    chat_id=cb_chat,
+                    user_id=cb_uid,
+                    query_id=cb_qid,
+                    message_id=cb_msgid,
+                    category_id=category_id,
+                )
+            else:
+                await handle_callback(
+                    user_id=cb_uid,
+                    message_id=cb_msgid,
+                    query_id=cb_qid,
+                    data=cb_data,
+                )
     except Exception as exc:
         logger.warning("Error processing update: %s", exc)
 

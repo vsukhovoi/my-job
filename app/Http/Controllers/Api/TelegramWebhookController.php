@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\TelegramSubscription;
 use App\Models\User;
 use App\Services\Telegram\TelegramCallbackRouter;
 use Illuminate\Http\JsonResponse;
@@ -94,5 +96,91 @@ class TelegramWebhookController extends Controller
         ]);
 
         return response()->json(['ok' => true]);
+    }
+
+    /**
+     * GET /api/telegram/alerts?telegram_user_id={id}
+     */
+    public function alerts(Request $request): JsonResponse
+    {
+        if ($request->header('X-Telegram-Webhook-Token') !== config('services.telegram.webhook_token')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $telegramUserId = $request->integer('telegram_user_id');
+
+        if (! $telegramUserId) {
+            return response()->json(['error' => 'Invalid payload'], 422);
+        }
+
+        $subscribed = TelegramSubscription::where('telegram_id', $telegramUserId)
+            ->pluck('category_id')
+            ->toArray();
+
+        $categories = Category::orderBy('position')->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn($c) => [
+                'id'         => $c->id,
+                'name'       => $c->name,
+                'subscribed' => in_array($c->id, $subscribed, true),
+            ]);
+
+        return response()->json(['categories' => $categories]);
+    }
+
+    /**
+     * POST /api/telegram/alerts/toggle
+     */
+    public function alertsToggle(Request $request): JsonResponse
+    {
+        if ($request->header('X-Telegram-Webhook-Token') !== config('services.telegram.webhook_token')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $telegramUserId = $request->integer('telegram_user_id');
+        $categoryId     = $request->integer('category_id');
+
+        if (! $telegramUserId || ! $categoryId) {
+            return response()->json(['error' => 'Invalid payload'], 422);
+        }
+
+        $category = Category::find($categoryId);
+
+        if (! $category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+
+        $existing = TelegramSubscription::where('telegram_id', $telegramUserId)
+            ->where('category_id', $categoryId)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $subscribed = false;
+        } else {
+            TelegramSubscription::create([
+                'telegram_id' => $telegramUserId,
+                'category_id' => $categoryId,
+            ]);
+            $subscribed = true;
+        }
+
+        $allSubscribed = TelegramSubscription::where('telegram_id', $telegramUserId)
+            ->pluck('category_id')
+            ->toArray();
+
+        $categories = Category::orderBy('position')->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn($c) => [
+                'id'         => $c->id,
+                'name'       => $c->name,
+                'subscribed' => in_array($c->id, $allSubscribed, true),
+            ]);
+
+        return response()->json([
+            'subscribed' => $subscribed,
+            'category'   => $category->name,
+            'categories' => $categories,
+        ]);
     }
 }
