@@ -9,7 +9,7 @@
 
     <p>Ваш код верифікації:</p>
 
-    <div style="font-size: 48px; font-weight: bold; letter-spacing: 10px; margin: 24px 0; color: #1e40af; white-space: nowrap;">
+    <div style="font-size: 40px; font-weight: bold; letter-spacing: 6px; margin: 24px 0; color: #1e40af;">
         {{ $code }}
     </div>
 
