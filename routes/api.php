@@ -52,7 +52,7 @@ Route::get('/vacancies/{id}', function (int $id) {
         'company'         => $vacancy->company->name,
         'salary'          => $salary,
         'employment_type' => $types,
-        'url'             => url('/jobs/' . $vacancy->slug),
+        'url'             => rtrim(config('app.url'), '/') . '/jobs/' . $vacancy->slug,
     ]);
 })->name('api.vacancies.show');
 
