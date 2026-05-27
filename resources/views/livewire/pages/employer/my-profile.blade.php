@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Services\TelegramService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
@@ -16,7 +17,8 @@ new #[Layout('layouts.app')] class extends Component
 
     public string $phone = '';
 
-    public string $telegram_id = '';
+    public ?string $telegramId   = null;
+    public string  $telegramLink = '';
 
     #[Validate('nullable|string|min:8')]
     public string $password = '';
@@ -29,10 +31,10 @@ new #[Layout('layouts.app')] class extends Component
     public function mount(): void
     {
         $user = auth()->user();
-        $this->name        = $user->name;
-        $this->email       = $user->email;
-        $this->phone       = $user->phone ?? '';
-        $this->telegram_id = $user->telegram_id ? (string) $user->telegram_id : '';
+        $this->name       = $user->name;
+        $this->email      = $user->email;
+        $this->phone      = $user->phone ?? '';
+        $this->telegramId = $user->telegram_id ? (string) $user->telegram_id : null;
     }
 
     public function save(): void
@@ -43,16 +45,14 @@ new #[Layout('layouts.app')] class extends Component
             'name'                  => 'required|string|min:2|max:100',
             'email'                 => 'required|email|max:100|unique:users,email,' . $userId,
             'phone'                 => 'nullable|string|max:20|unique:users,phone,' . $userId,
-            'telegram_id'           => 'nullable|numeric|min:1000000000|max:9999999999|unique:users,telegram_id,' . $userId,
             'password'              => 'nullable|string|min:8',
             'password_confirmation' => 'nullable|string|same:password',
         ]);
 
         $data = [
-            'name'        => $this->name,
-            'email'       => $this->email,
-            'phone'       => $this->phone ?: null,
-            'telegram_id' => $this->telegram_id ?: null,
+            'name'  => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone ?: null,
         ];
 
         if ($this->password) {
@@ -66,6 +66,19 @@ new #[Layout('layouts.app')] class extends Component
         $this->saved                 = true;
 
         $this->dispatch('profile-saved');
+    }
+
+    public function generateTelegramLink(): void
+    {
+        $token = app(TelegramService::class)->generateLinkToken(auth()->user());
+        $this->telegramLink = 'https://t.me/' . config('telegram.bot_username') . '?start=link_' . $token;
+    }
+
+    public function unlinkTelegram(): void
+    {
+        auth()->user()->update(['telegram_id' => null, 'telegram_link_token' => null]);
+        $this->telegramId   = null;
+        $this->telegramLink = '';
     }
 }; ?>
 
@@ -105,16 +118,58 @@ new #[Layout('layouts.app')] class extends Component
                     @error('phone')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Telegram ID --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Telegram ID</label>
-                    <input wire:model="telegram_id" type="text" placeholder="123456789"
-                           class="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400">
-                    <p class="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
-                        Дізнатись свій ID можна через бот
-                        <a href="https://t.me/userinfobot" target="_blank" class="text-blue-500 hover:underline">@userinfobot</a>
-                    </p>
-                    @error('telegram_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                {{-- Telegram --}}
+                <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/30">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Telegram</span>
+                        </div>
+                        @if($telegramId)
+                            <span class="text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2.5 py-1 rounded-lg">Прив'язано</span>
+                        @else
+                            <span class="text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2.5 py-1 rounded-lg">Не прив'язано</span>
+                        @endif
+                    </div>
+
+                    @if($telegramId)
+                        <div class="mt-3 flex items-center justify-between">
+                            <span class="text-xs text-gray-400 dark:text-gray-500">ID: {{ $telegramId }}</span>
+                            <button wire:click="unlinkTelegram" type="button"
+                                    class="text-xs text-red-500 hover:text-red-600 dark:hover:text-red-400 font-medium transition-colors">
+                                Від'єднати
+                            </button>
+                        </div>
+                    @elseif($telegramLink)
+                        <div class="mt-3 space-y-2">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Перейдіть у бота, щоб завершити прив'язку:</p>
+                            <a href="{{ $telegramLink }}" target="_blank"
+                               class="flex items-center justify-center gap-2 w-full py-2 bg-[#2AABEE] text-white text-sm font-medium rounded-xl hover:bg-[#229ED9] transition-colors">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+                                </svg>
+                                Відкрити в Telegram
+                            </a>
+                            <button wire:click="$set('telegramLink', '')" type="button"
+                                    class="w-full text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-1">
+                                Скасувати
+                            </button>
+                        </div>
+                    @else
+                        <div class="mt-3">
+                            <button wire:click="generateTelegramLink" type="button"
+                                    wire:loading.attr="disabled"
+                                    class="flex items-center justify-center gap-2 w-full py-2 text-sm font-medium text-[#2AABEE] border border-[#2AABEE] rounded-xl hover:bg-[#2AABEE] hover:text-white transition-colors">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+                                </svg>
+                                <span wire:loading.remove wire:target="generateTelegramLink">Прив'язати Telegram</span>
+                                <span wire:loading wire:target="generateTelegramLink">Генерація...</span>
+                            </button>
+                        </div>
+                    @endif
                 </div>
 
                 <hr class="border-gray-100 dark:border-gray-700">
