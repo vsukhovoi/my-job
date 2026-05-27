@@ -36,7 +36,6 @@ final class SendNewApplicationNotification implements ShouldQueue
 
         if ($employer->prefersEmail()) {
             Mail::to($employer->email)->send(new NewApplicationMail($application));
-            return;
         }
 
         if (! $employer->prefersTelegram()) {

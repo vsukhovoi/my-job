@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role', 'telegram_id', 'city_id', 'telegram_link_token', 'provider', 'provider_id', 'profile_completeness_modal_shown_at', 'notification_channel'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'telegram_id', 'city_id', 'telegram_link_token', 'provider', 'provider_id', 'profile_completeness_modal_shown_at', 'notify_via_email', 'notify_via_telegram'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
@@ -35,7 +35,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             'role'              => UserRole::class,
             'telegram_id'                        => 'integer',
             'profile_completeness_modal_shown_at' => 'datetime',
-            'notification_channel'               => \App\Enums\NotificationChannel::class,
+            'notify_via_email'    => 'boolean',
+            'notify_via_telegram' => 'boolean',
         ];
     }
 
@@ -102,13 +103,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function prefersEmail(): bool
     {
-        return $this->notification_channel === \App\Enums\NotificationChannel::Email;
+        return (bool) $this->notify_via_email;
     }
 
     public function prefersTelegram(): bool
     {
-        return $this->notification_channel === \App\Enums\NotificationChannel::Telegram
-            && ! empty($this->telegram_id);
+        return (bool) $this->notify_via_telegram && ! empty($this->telegram_id);
     }
 
     /** Phase 2: implement when CvAccess addon purchase tracking is available */
