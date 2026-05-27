@@ -212,6 +212,12 @@ new #[Layout('layouts.app')] class extends Component
                     @error('city_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
+                {{-- Notification preferences --}}
+                <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/30">
+                    <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Канал сповіщень</h3>
+                    <livewire:shared.notification-preferences />
+                </div>
+
                 <hr class="border-gray-100 dark:border-gray-700">
 
                 {{-- Password --}}

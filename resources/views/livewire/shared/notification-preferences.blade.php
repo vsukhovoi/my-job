@@ -88,7 +88,7 @@ new class extends Component {
                     @if($hasTelegram)
                         <p class="text-xs text-green-600">підключено ✓</p>
                     @else
-                        <a href="{{ route('seeker.profile') }}"
+                        <a href="{{ auth()->user()->role === \App\Enums\UserRole::Employer ? route('employer.my-profile') : route('seeker.profile') }}"
                            class="text-xs text-orange-500 hover:underline">
                             підключити →
                         </a>
