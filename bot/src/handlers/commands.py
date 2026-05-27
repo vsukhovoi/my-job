@@ -36,7 +36,6 @@ async def handle_start(chat_id: int, user_id: int, text: str) -> None:
         reply_kb = ReplyKeyboardMarkup(
             [[KeyboardButton("📱 Поділитися номером", request_contact=True)]],
             resize_keyboard=True,
-            one_time_keyboard=True,
         )
         await get_bot().send_message(
             chat_id=chat_id,
