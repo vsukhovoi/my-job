@@ -413,14 +413,6 @@
         >Для роботодавців</a>
 
         @auth
-            @if(auth()->user()->role === \App\Enums\UserRole::Employer)
-                <a href="{{ route('employer.dashboard') }}"
-                   style="padding:14px 20px; color:#fff; text-decoration:none; font-weight:600; font-size:1rem;
-                          border-bottom:1px solid rgba(255,255,255,0.08); transition:background 0.2s;"
-                   onmouseover="this.style.background='rgba(255,255,255,0.08)'"
-                   onmouseout="this.style.background=''"
-                >Мої вакансії</a>
-            @endif
             @if(auth()->user()->role === \App\Enums\UserRole::Candidate)
                 <a href="{{ route('seeker.dashboard') }}"
                    style="padding:14px 20px; color:#fff; text-decoration:none; font-weight:600; font-size:1rem;
