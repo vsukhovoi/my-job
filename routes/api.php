@@ -14,6 +14,10 @@ Route::post('/telegram/webhook/callback', [\App\Http\Controllers\Api\TelegramWeb
     ->name('telegram.webhook.callback')
     ->middleware('throttle:60,1');
 
+Route::post('/telegram/link', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'link'])
+    ->name('telegram.link')
+    ->middleware('throttle:30,1');
+
 Route::prefix('telegram/auth')->group(function (): void {
     Route::post('/init', [TelegramAuthController::class, 'init'])->middleware('throttle:20,1');
     Route::get('/status/{token}', [TelegramAuthController::class, 'status'])->middleware('throttle:120,1');

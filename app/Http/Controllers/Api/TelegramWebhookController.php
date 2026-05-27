@@ -10,6 +10,7 @@ use App\Services\Telegram\TelegramCallbackRouter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class TelegramWebhookController extends Controller
 {
@@ -55,6 +56,42 @@ class TelegramWebhookController extends Controller
             messageId:       $messageId,
             callbackQueryId: $callbackQueryId ?: null,
         );
+
+        return response()->json(['ok' => true]);
+    }
+
+    /**
+     * POST /api/telegram/link
+     * Links a Telegram account to an existing user via telegram_link_token.
+     */
+    public function link(Request $request): JsonResponse
+    {
+        $token = $request->header('X-Telegram-Webhook-Token');
+
+        if ($token !== config('services.telegram.webhook_token')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $linkToken      = $request->string('link_token')->toString();
+        $telegramUserId = $request->integer('telegram_user_id');
+
+        if (! $linkToken || ! $telegramUserId) {
+            return response()->json(['error' => 'Invalid payload'], 422);
+        }
+
+        $user = User::where('telegram_link_token', $linkToken)->first();
+
+        if (! $user) {
+            Log::warning('TelegramWebhookController::link: token not found', [
+                'telegram_user_id' => $telegramUserId,
+            ]);
+            return response()->json(['error' => 'Invalid or expired token'], 404);
+        }
+
+        $user->update([
+            'telegram_id'         => $telegramUserId,
+            'telegram_link_token' => null,
+        ]);
 
         return response()->json(['ok' => true]);
     }
