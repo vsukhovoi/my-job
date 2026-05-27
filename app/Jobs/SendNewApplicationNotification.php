@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Mail\NewApplicationMail;
 use App\Models\Application;
 use App\Services\Telegram\CallbackDataSigner;
 use App\Services\Telegram\UrlGenerators\ApplicationUrlGenerator;
 use App\Services\TelegramNotifier;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Mail;
 
 final class SendNewApplicationNotification implements ShouldQueue
 {
@@ -31,6 +33,11 @@ final class SendNewApplicationNotification implements ShouldQueue
         }
 
         $employer = $application->vacancy->company->user;
+
+        if ($employer->prefersEmail()) {
+            Mail::to($employer->email)->send(new NewApplicationMail($application));
+            return;
+        }
 
         if (! $employer->prefersTelegram()) {
             return;
