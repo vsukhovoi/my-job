@@ -119,17 +119,17 @@
         .site-header__auth {
             display: none;
         }
-        .header-profile {
-            display: flex;
-        }
     }
 
     /* Mobile profile icon + dropdown */
     .header-profile {
-        display: none;
         position: relative;
         align-items: center;
         flex-shrink: 0;
+        display: none; /* shown via @media below */
+    }
+    @media (max-width: 767px) {
+        .header-profile { display: flex; }
     }
     .header-profile__btn {
         width: 36px;
