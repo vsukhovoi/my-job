@@ -10,7 +10,8 @@
         ['route' => 'seeker.saved',        'label' => 'Збережені'],
         ['route' => 'seeker.recommended',  'label' => 'Рекомендовані'],
         ['route' => 'seeker.messages',     'label' => 'Повідомлення', 'badge' => true],
-        ['route' => 'seeker.profile',      'label' => 'Мій профіль'],
+        ['route' => 'seeker.profile',         'label' => 'Мій профіль'],
+        ['route' => 'seeker.telegram-guide', 'label' => 'Telegram-бот'],
     ];
 
     $activeMap = [

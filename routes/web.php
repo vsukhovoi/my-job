@@ -195,6 +195,7 @@ Route::middleware(['auth', 'role:candidate'])
         Volt::route('/profile', 'pages.seeker.profile')->name('profile');
         Volt::route('/messages', 'pages.seeker.support-threads')->name('messages');
         Volt::route('/messages/{threadId}', 'pages.seeker.support-thread-detail')->name('message.detail');
+        Volt::route('/telegram-guide', 'pages.seeker.telegram-guide')->name('telegram-guide');
     });
 
 // ── Payment callbacks ───────────────────────────────────────────────────────
