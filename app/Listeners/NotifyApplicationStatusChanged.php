@@ -7,9 +7,15 @@ namespace App\Listeners;
 use App\Enums\ApplicationStatus;
 use App\Events\ApplicationStatusChanged;
 use App\Services\TelegramNotifier;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class NotifyApplicationStatusChanged
+class NotifyApplicationStatusChanged implements ShouldQueue
 {
+    use InteractsWithQueue;
+
+    public string $queue = 'notifications';
+
     public function __construct(
         private readonly TelegramNotifier $notifier,
     ) {}
