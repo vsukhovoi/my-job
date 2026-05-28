@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Notifications;
 
 use App\Enums\ApplicationStatus;
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Events\ApplicationStatusChanged;
 use App\Listeners\NotifyApplicationStatusChanged;
@@ -38,9 +37,10 @@ class CandidateStatusChangedNotificationTest extends TestCase
         $company   = Company::factory()->create(['user_id' => $employer->id]);
         $vacancy   = Vacancy::factory()->create(['company_id' => $company->id]);
         $candidate = User::factory()->create([
-            'role'                 => UserRole::Candidate,
-            'telegram_id'          => 444444444,
-            'notification_channel' => NotificationChannel::Telegram,
+            'role'                => UserRole::Candidate,
+            'telegram_id'         => 444444444,
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
         ]);
         $application = Application::factory()->create([
             'vacancy_id' => $vacancy->id,

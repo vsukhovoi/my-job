@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Notifications;
 
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Jobs\SendNewApplicationNotification;
 use App\Models\Application;
@@ -31,8 +30,9 @@ class NewApplicationNotificationWithKeyboardTest extends TestCase
     private function makeApplicationForTelegramEmployer(): Application
     {
         $employer  = User::factory()->employer()->create([
-            'telegram_id'          => 123456789,
-            'notification_channel' => NotificationChannel::Telegram,
+            'telegram_id'         => 123456789,
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
         ]);
         $company   = Company::factory()->create(['user_id' => $employer->id]);
         $vacancy   = Vacancy::factory()->create(['company_id' => $company->id]);
@@ -84,8 +84,9 @@ class NewApplicationNotificationWithKeyboardTest extends TestCase
     public function it_falls_back_when_employer_has_no_telegram_id(): void
     {
         $employer  = User::factory()->employer()->create([
-            'telegram_id'          => null,
-            'notification_channel' => NotificationChannel::Email,
+            'telegram_id'      => null,
+            'notify_via_email' => true,
+            'notify_via_telegram' => false,
         ]);
         $company   = Company::factory()->create(['user_id' => $employer->id]);
         $vacancy   = Vacancy::factory()->create(['company_id' => $company->id]);

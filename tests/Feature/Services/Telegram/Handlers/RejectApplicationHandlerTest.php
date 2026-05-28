@@ -6,7 +6,6 @@ namespace Tests\Feature\Services\Telegram\Handlers;
 
 use App\DataTransferObjects\CallbackDataPayload;
 use App\Enums\ApplicationStatus;
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Events\ApplicationStatusChanged;
 use App\Models\Application;
@@ -38,8 +37,9 @@ class RejectApplicationHandlerTest extends TestCase
     private function makeEmployerWithApplication(ApplicationStatus $status = ApplicationStatus::Pending): array
     {
         $employer  = User::factory()->employer()->create([
-            'telegram_id'          => 111111111,
-            'notification_channel' => NotificationChannel::Telegram,
+            'telegram_id'         => 111111111,
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
         ]);
         $company   = Company::factory()->create(['user_id' => $employer->id]);
         $vacancy   = Vacancy::factory()->create(['company_id' => $company->id]);

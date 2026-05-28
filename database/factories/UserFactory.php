@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,9 +24,10 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'role'                 => UserRole::Candidate,
-            'notification_channel' => NotificationChannel::Email,
-            'remember_token'       => Str::random(10),
+            'role'               => UserRole::Candidate,
+            'notify_via_email'   => true,
+            'notify_via_telegram' => false,
+            'remember_token'     => Str::random(10),
         ];
     }
 

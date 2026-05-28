@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Notifications;
 
 use App\Enums\InterviewRequestStatus;
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Events\InterviewRequestSent;
 use App\Events\InterviewResponseSubmitted;
@@ -51,7 +50,7 @@ class InterviewNotificationsTest extends TestCase
     public function it_sends_telegram_notification_when_interview_request_sent_and_candidate_prefers_telegram(): void
     {
         $request = $this->makeInterviewRequest([
-            'notification_channel' => NotificationChannel::Telegram,
+            'notify_via_telegram' => true, 'notify_via_email' => false,
             'telegram_id'          => 111222333,
         ]);
 
@@ -69,7 +68,7 @@ class InterviewNotificationsTest extends TestCase
     public function it_skips_telegram_when_candidate_has_no_telegram_id(): void
     {
         $request = $this->makeInterviewRequest([
-            'notification_channel' => NotificationChannel::Telegram,
+            'notify_via_telegram' => true, 'notify_via_email' => false,
             'telegram_id'          => null,
         ]);
 
@@ -85,7 +84,7 @@ class InterviewNotificationsTest extends TestCase
     public function it_skips_telegram_when_candidate_prefers_email(): void
     {
         $request = $this->makeInterviewRequest([
-            'notification_channel' => NotificationChannel::Email,
+            'notify_via_email' => true, 'notify_via_telegram' => false,
             'telegram_id'          => 111222333,
         ]);
 
@@ -101,7 +100,7 @@ class InterviewNotificationsTest extends TestCase
     public function it_sends_telegram_notification_when_interview_response_submitted_and_employer_prefers_telegram(): void
     {
         $request = $this->makeInterviewRequest([], [
-            'notification_channel' => NotificationChannel::Telegram,
+            'notify_via_telegram' => true, 'notify_via_email' => false,
             'telegram_id'          => 444555666,
         ]);
 
@@ -126,7 +125,7 @@ class InterviewNotificationsTest extends TestCase
     public function it_skips_telegram_notification_when_employer_has_no_telegram_id(): void
     {
         $request = $this->makeInterviewRequest([], [
-            'notification_channel' => NotificationChannel::Telegram,
+            'notify_via_telegram' => true, 'notify_via_email' => false,
             'telegram_id'          => null,
         ]);
 
@@ -149,7 +148,7 @@ class InterviewNotificationsTest extends TestCase
     public function it_includes_deep_link_in_notification_payload(): void
     {
         $request = $this->makeInterviewRequest([
-            'notification_channel' => NotificationChannel::Telegram,
+            'notify_via_telegram' => true, 'notify_via_email' => false,
             'telegram_id'          => 777888999,
         ]);
 

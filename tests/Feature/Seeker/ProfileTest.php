@@ -100,18 +100,18 @@ class ProfileTest extends TestCase
     }
 
     #[Test]
-    public function candidate_can_update_telegram_id(): void
+    public function candidate_can_unlink_telegram(): void
     {
+        $this->candidate->update(['telegram_id' => 1234567890]);
         $this->actingAs($this->candidate);
 
         Volt::test('pages.seeker.profile')
-            ->set('telegram_id', '1234567890')
-            ->call('save')
+            ->call('unlinkTelegram')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
             'id'          => $this->candidate->id,
-            'telegram_id' => 1234567890,
+            'telegram_id' => null,
         ]);
     }
 

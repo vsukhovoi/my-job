@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Support;
 
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Mail\SupportMessageNotification;
 use App\Models\SupportThread;
@@ -30,7 +29,7 @@ class NotificationChannelTest extends TestCase
             $mock->shouldNotReceive('send');
         }));
 
-        $user   = User::factory()->create(['notification_channel' => NotificationChannel::Email]);
+        $user   = User::factory()->create(['notify_via_email' => true, 'notify_via_telegram' => false]);
         $admin  = User::factory()->create(['role' => UserRole::Admin]);
         $thread = SupportThread::factory()->create(['user_id' => $user->id]);
 
@@ -58,8 +57,9 @@ class NotificationChannelTest extends TestCase
         $this->instance(TelegramNotifier::class, $telegramMock);
 
         $user   = User::factory()->create([
-            'notification_channel' => NotificationChannel::Telegram,
-            'telegram_id'          => '123456789',
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
+            'telegram_id'         => '123456789',
         ]);
         $admin  = User::factory()->create(['role' => UserRole::Admin]);
         $thread = SupportThread::factory()->create(['user_id' => $user->id]);
@@ -85,8 +85,9 @@ class NotificationChannelTest extends TestCase
         }));
 
         $user   = User::factory()->create([
-            'notification_channel' => NotificationChannel::Telegram,
-            'telegram_id'          => null,
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
+            'telegram_id'         => null,
         ]);
         $admin  = User::factory()->create(['role' => UserRole::Admin]);
         $thread = SupportThread::factory()->create(['user_id' => $user->id]);
@@ -100,60 +101,49 @@ class NotificationChannelTest extends TestCase
     }
 
     #[Test]
-    public function cannot_select_telegram_without_telegram_id(): void
+    public function cannot_enable_telegram_without_telegram_id(): void
     {
-        $user = User::factory()->create(['telegram_id' => null]);
+        $user = User::factory()->create(['telegram_id' => null, 'notify_via_telegram' => false]);
         $this->actingAs($user);
 
         Volt::test('shared.notification-preferences')
-            ->set('channel', 'telegram')
-            ->call('save')
-            ->assertHasErrors(['channel']);
+            ->call('toggle', 'telegram')
+            ->call('save');
 
-        $this->assertEquals(
-            NotificationChannel::Email,
-            $user->fresh()->notification_channel
-        );
+        $this->assertFalse((bool) $user->fresh()->notify_via_telegram);
     }
 
     #[Test]
-    public function can_switch_to_telegram_with_telegram_id(): void
+    public function can_enable_telegram_with_telegram_id(): void
     {
         $user = User::factory()->create([
-            'notification_channel' => NotificationChannel::Email,
-            'telegram_id'          => '555666777',
+            'notify_via_email'    => true,
+            'notify_via_telegram' => false,
+            'telegram_id'         => '555666777',
         ]);
         $this->actingAs($user);
 
         Volt::test('shared.notification-preferences')
-            ->set('channel', 'telegram')
-            ->call('save')
-            ->assertSet('saved', true)
-            ->assertHasNoErrors();
+            ->call('toggle', 'telegram')
+            ->call('save');
 
-        $this->assertEquals(
-            NotificationChannel::Telegram,
-            $user->fresh()->notification_channel
-        );
+        $this->assertTrue((bool) $user->fresh()->notify_via_telegram);
     }
 
     #[Test]
-    public function can_switch_back_to_email(): void
+    public function can_enable_email_when_telegram_is_on(): void
     {
         $user = User::factory()->create([
-            'notification_channel' => NotificationChannel::Telegram,
-            'telegram_id'          => '555666777',
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
+            'telegram_id'         => '555666777',
         ]);
         $this->actingAs($user);
 
         Volt::test('shared.notification-preferences')
-            ->set('channel', 'email')
-            ->call('save')
-            ->assertSet('saved', true);
+            ->call('toggle', 'email')
+            ->call('save');
 
-        $this->assertEquals(
-            NotificationChannel::Email,
-            $user->fresh()->notification_channel
-        );
+        $this->assertTrue((bool) $user->fresh()->notify_via_email);
     }
 }

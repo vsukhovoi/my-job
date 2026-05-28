@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Integration;
 
 use App\Enums\ApplicationStatus;
-use App\Enums\NotificationChannel;
 use App\Enums\UserRole;
 use App\Models\Application;
 use App\Models\Company;
@@ -37,8 +36,9 @@ class ApplicationRejectionFlowTest extends TestCase
     private function makeEmployerWithApplication(ApplicationStatus $status = ApplicationStatus::Pending): array
     {
         $employer  = User::factory()->employer()->create([
-            'telegram_id'          => 333333333,
-            'notification_channel' => NotificationChannel::Telegram,
+            'telegram_id'         => 333333333,
+            'notify_via_telegram' => true,
+            'notify_via_email'    => false,
         ]);
         $company   = Company::factory()->create(['user_id' => $employer->id]);
         $vacancy   = Vacancy::factory()->create(['company_id' => $company->id]);
