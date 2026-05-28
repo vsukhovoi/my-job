@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\Log;
 
 class NotifyExpiringVacanciesCommand extends Command
 {
-    protected $signature = 'vacancies:notify-expiring
+    protected $signature = 'app:notify-expiring-vacancies
                             {--hours=24 : За скільки годин до експайру повідомляти}
                             {--dry-run : Не відправляти, лише вивести список}
                             {--limit=100 : Максимум вакансій за один запуск}';
 
-    protected $description = 'Надсилає роботодавцям сповіщення в Telegram про вакансії, що скоро завершаться';
+    protected $description = 'Надсилає роботодавцям сповіщення про вакансії, що скоро завершаться';
 
     public function handle(): int
     {
@@ -46,17 +46,8 @@ class NotifyExpiringVacanciesCommand extends Command
                 continue;
             }
 
-            if (! $user->telegram_id) {
-                Log::channel('vacancies')->info('Notify-expiring: user without telegram_id', [
-                    'vacancy_id' => $vacancy->id,
-                    'user_id'    => $user->id,
-                ]);
-                $skipped++;
-                continue;
-            }
-
-            if (! $user->telegram_notifications_enabled) {
-                Log::channel('vacancies')->info('Notify-expiring: notifications disabled', [
+            if (! $user->prefersTelegram() && ! $user->prefersEmail()) {
+                Log::channel('vacancies')->info('Notify-expiring: no notification channel', [
                     'vacancy_id' => $vacancy->id,
                     'user_id'    => $user->id,
                 ]);
@@ -65,7 +56,8 @@ class NotifyExpiringVacanciesCommand extends Command
             }
 
             if ($isDryRun) {
-                $this->line("[dry-run] Vacancy #{$vacancy->id} → user #{$user->id} (tg: {$user->telegram_id})");
+                $channel = $user->prefersTelegram() ? 'telegram' : 'email';
+                $this->line("[dry-run] Vacancy #{$vacancy->id} «{$vacancy->title}» → user #{$user->id} ({$channel})");
                 $sent++;
                 continue;
             }
@@ -75,13 +67,13 @@ class NotifyExpiringVacanciesCommand extends Command
                 $vacancy->markExpiryNotificationSent();
 
                 Log::channel('vacancies')->info('Notify-expiring: sent', [
-                    'vacancy_id' => $vacancy->id,
-                    'user_id'    => $user->id,
+                    'vacancy_id'  => $vacancy->id,
+                    'user_id'     => $user->id,
                     'telegram_id' => $user->telegram_id,
                 ]);
                 $sent++;
 
-                usleep(50_000); // Telegram rate limit: ~20 msg/s
+                usleep(50_000);
             } catch (\Throwable $e) {
                 Log::channel('vacancies')->error('Notify-expiring: failed', [
                     'vacancy_id' => $vacancy->id,
