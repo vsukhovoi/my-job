@@ -29,12 +29,12 @@ class TelegramSecurityTest extends TestCase
     {
         $token = Str::random(48);
 
-        // 120 запитів — всі мають пройти
-        for ($i = 0; $i < 120; $i++) {
+        // 110 запитів (ceil(TTL_300s / polling_3s) + 10 буфер) — всі мають пройти
+        for ($i = 0; $i < 110; $i++) {
             $this->getJson("/api/telegram/auth/status/{$token}");
         }
 
-        // 121-й — має бути заблокований
+        // 111-й — має бути заблокований
         $this->getJson("/api/telegram/auth/status/{$token}")
             ->assertStatus(429);
     }

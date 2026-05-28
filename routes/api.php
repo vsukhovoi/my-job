@@ -28,7 +28,7 @@ Route::post('/telegram/alerts/toggle', [\App\Http\Controllers\Api\TelegramWebhoo
 
 Route::prefix('telegram/auth')->group(function (): void {
     Route::post('/init', [TelegramAuthController::class, 'init'])->middleware('throttle:20,1');
-    Route::get('/status/{token}', [TelegramAuthController::class, 'status'])->middleware('throttle:120,1');
+    Route::get('/status/{token}', [TelegramAuthController::class, 'status'])->middleware('throttle:110,5');
     Route::post('/contact', [TelegramAuthController::class, 'contact'])->middleware('throttle:60,1');
 });
 
