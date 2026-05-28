@@ -190,8 +190,10 @@ new #[Layout('layouts.app')] class extends Component
                                     <select wire:change="updateStatus({{ $application->id }}, $event.target.value)"
                                             class="text-xs border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         @foreach($this->statuses as $status)
+                                            @php $employerAllowed = in_array('employer', $status->allowedActors(), true); @endphp
                                             <option value="{{ $status->value }}"
-                                                {{ $application->status === $status ? 'selected' : '' }}>
+                                                {{ $application->status === $status ? 'selected' : '' }}
+                                                {{ ! $employerAllowed && $application->status !== $status ? 'disabled' : '' }}>
                                                 {{ $status->label() }}
                                             </option>
                                         @endforeach

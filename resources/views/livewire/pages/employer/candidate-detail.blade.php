@@ -244,7 +244,10 @@ new #[Layout('layouts.app')] class extends Component
     #[Computed]
     public function statuses(): array
     {
-        return ApplicationStatus::cases();
+        return array_values(array_filter(
+            ApplicationStatus::cases(),
+            fn (ApplicationStatus $s) => in_array('employer', $s->allowedActors(), true),
+        ));
     }
 
     #[Computed]
