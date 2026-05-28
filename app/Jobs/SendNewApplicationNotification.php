@@ -34,19 +34,15 @@ final class SendNewApplicationNotification implements ShouldQueue
 
         $employer = $application->vacancy->company->user;
 
-        if ($employer->prefersEmail()) {
+        if ($employer->prefersTelegram()) {
+            $notifier->sendMessageWithKeyboard(
+                telegramId:     (int) $employer->telegram_id,
+                text:           $this->formatMessage($application),
+                inlineKeyboard: $this->buildKeyboard($application, $signer, $urls),
+            );
+        } elseif ($employer->prefersEmail()) {
             Mail::to($employer->email)->send(new NewApplicationMail($application));
         }
-
-        if (! $employer->prefersTelegram()) {
-            return;
-        }
-
-        $notifier->sendMessageWithKeyboard(
-            telegramId:     (int) $employer->telegram_id,
-            text:           $this->formatMessage($application),
-            inlineKeyboard: $this->buildKeyboard($application, $signer, $urls),
-        );
     }
 
     private function formatMessage(Application $application): string

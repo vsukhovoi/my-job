@@ -31,23 +31,19 @@ final class SendApplicationStatusNotification implements ShouldQueue
 
         $candidate = $application->user;
 
-        if ($candidate->prefersEmail()) {
-            Mail::to($candidate->email)->send(new ApplicationStatusChangedMail($application, $application->status));
-        }
-
-        if (! $candidate->prefersTelegram()) {
-            return;
-        }
-
         $vacancy = $application->vacancy;
         $status  = $application->status->label();
 
-        $text = "📋 <b>Статус вашої заявки змінено</b>\n\n"
-            . "Вакансія: <b>{$vacancy->title}</b>\n"
-            . "Компанія: <b>{$vacancy->company->name}</b>\n"
-            . "Новий статус: <b>{$status}</b>\n\n"
-            . "<a href=\"" . rtrim(config('app.url'), '/') . "/jobs/{$vacancy->slug}\">Переглянути вакансію</a>";
+        if ($candidate->prefersTelegram()) {
+            $text = "📋 <b>Статус вашої заявки змінено</b>\n\n"
+                . "Вакансія: <b>{$vacancy->title}</b>\n"
+                . "Компанія: <b>{$vacancy->company->name}</b>\n"
+                . "Новий статус: <b>{$status}</b>\n\n"
+                . "<a href=\"" . rtrim(config('app.url'), '/') . "/jobs/{$vacancy->slug}\">Переглянути вакансію</a>";
 
-        $service->sendMessage((int) $candidate->telegram_id, $text);
+            $service->sendMessage((int) $candidate->telegram_id, $text);
+        } elseif ($candidate->prefersEmail()) {
+            Mail::to($candidate->email)->send(new ApplicationStatusChangedMail($application, $application->status));
+        }
     }
 }

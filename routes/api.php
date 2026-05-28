@@ -12,24 +12,24 @@ Route::post('/mono/webhook', \App\Http\Controllers\Api\MonobankWebhookController
 
 Route::post('/telegram/webhook/callback', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'callback'])
     ->name('telegram.webhook.callback')
-    ->middleware('throttle:60,1');
+    ->middleware('throttle:telegram-callback');
 
 Route::post('/telegram/link', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'link'])
     ->name('telegram.link')
-    ->middleware('throttle:30,1');
+    ->middleware('throttle:telegram-link');
 
 Route::get('/telegram/alerts', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'alerts'])
     ->name('telegram.alerts')
-    ->middleware('throttle:60,1');
+    ->middleware('throttle:telegram-alerts');
 
 Route::post('/telegram/alerts/toggle', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'alertsToggle'])
     ->name('telegram.alerts.toggle')
-    ->middleware('throttle:60,1');
+    ->middleware('throttle:telegram-alerts-toggle');
 
 Route::prefix('telegram/auth')->group(function (): void {
-    Route::post('/init', [TelegramAuthController::class, 'init'])->middleware('throttle:20,1');
-    Route::get('/status/{token}', [TelegramAuthController::class, 'status'])->middleware('throttle:120,1');
-    Route::post('/contact', [TelegramAuthController::class, 'contact'])->middleware('throttle:60,1');
+    Route::post('/init', [TelegramAuthController::class, 'init'])->middleware('throttle:telegram-auth-init');
+    Route::get('/status/{token}', [TelegramAuthController::class, 'status'])->middleware('throttle:telegram-auth-status');
+    Route::post('/contact', [TelegramAuthController::class, 'contact'])->middleware('throttle:telegram-auth-contact');
 });
 
 Route::get('/vacancies/{id}', function (int $id) {

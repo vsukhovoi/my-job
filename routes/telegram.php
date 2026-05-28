@@ -26,4 +26,4 @@ Route::post('/telegram/webhook', function (Nutgram $bot): void {
     } catch (\Throwable $e) {
         Log::warning('Telegram webhook error: ' . $e->getMessage());
     }
-})->middleware('throttle:30,1');
+})->middleware('throttle:telegram-webhook');
