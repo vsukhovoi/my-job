@@ -11,6 +11,7 @@
         ['route' => 'employer.profile',            'label' => 'Профіль компанії'],
         ['route' => 'employer.my-profile',         'label' => 'Мій профіль'],
         ['route' => 'employer.support',            'label' => 'Підтримка', 'badge' => true],
+        ['route' => 'employer.telegram-guide',    'label' => 'Telegram-бот'],
     ];
 
     $activeMap = [

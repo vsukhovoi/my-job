@@ -134,6 +134,7 @@ Route::middleware(['auth', 'role:employer'])
         Volt::route('/payments', 'pages.employer.payments')->name('payments');
         Volt::route('/my-profile', 'pages.employer.my-profile')->name('my-profile');
         Volt::route('/support', 'pages.employer.support')->name('support');
+        Volt::route('/telegram-guide', 'pages.employer.telegram-guide')->name('telegram-guide');
     });
 
 // ── Resume Wizard ───────────────────────────────────────────────────────────
