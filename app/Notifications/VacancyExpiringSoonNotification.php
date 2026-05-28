@@ -23,11 +23,17 @@ class VacancyExpiringSoonNotification extends Notification implements ShouldQueu
     /** @return array<string> */
     public function via(object $notifiable): array
     {
+        $channels = [];
+
         if ($notifiable->prefersTelegram()) {
-            return ['telegram'];
+            $channels[] = 'telegram';
         }
 
-        return ['mail'];
+        if ($notifiable->prefersEmail()) {
+            $channels[] = 'mail';
+        }
+
+        return $channels ?: ['mail'];
     }
 
     public function toTelegram(object $notifiable): array

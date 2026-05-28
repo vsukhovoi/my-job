@@ -25,13 +25,10 @@ use App\Listeners\NotifyInterviewResponseSubmitted;
 use App\Listeners\SendStatusNotification;
 use App\Notifications\Channels\TelegramChannel;
 use Carbon\Carbon;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use SocialiteProviders\Apple\AppleExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -43,8 +40,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Carbon::setLocale('uk');
-
-        $this->bootTelegramRateLimiters();
 
         Notification::extend('telegram', fn ($app) => $app->make(TelegramChannel::class));
 
@@ -62,41 +57,5 @@ class AppServiceProvider extends ServiceProvider
 
         User::observe(CandidateProfileObserver::class);
         Vacancy::observe(VacancyObserver::class);
-    }
-
-    private function bootTelegramRateLimiters(): void
-    {
-        // TTL сесії = 5 хв, polling = 3 сек → 100 запитів за цикл + 10 буфер = 110 per 5 min
-        RateLimiter::for('telegram-auth-status', fn (Request $request) =>
-            Limit::perMinutes(5, 110)
-        );
-
-        RateLimiter::for('telegram-auth-init', fn (Request $request) =>
-            Limit::perMinute(20)
-        );
-
-        RateLimiter::for('telegram-auth-contact', fn (Request $request) =>
-            Limit::perMinute(60)
-        );
-
-        RateLimiter::for('telegram-callback', fn (Request $request) =>
-            Limit::perMinute(60)
-        );
-
-        RateLimiter::for('telegram-link', fn (Request $request) =>
-            Limit::perMinute(30)
-        );
-
-        RateLimiter::for('telegram-alerts', fn (Request $request) =>
-            Limit::perMinute(60)
-        );
-
-        RateLimiter::for('telegram-alerts-toggle', fn (Request $request) =>
-            Limit::perMinute(60)
-        );
-
-        RateLimiter::for('telegram-webhook', fn (Request $request) =>
-            Limit::perMinute(30)
-        );
     }
 }
