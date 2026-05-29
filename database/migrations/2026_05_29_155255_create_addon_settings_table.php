@@ -11,14 +11,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('addon_settings', function (Blueprint $table) {
+        Schema::createIfNotExists('addon_settings', function (Blueprint $table) {
             $table->id();
             $table->string('addon_type')->unique();
             $table->unsignedInteger('price');
             $table->timestamps();
         });
 
-        DB::table('addon_settings')->insert([
+        DB::table('addon_settings')->insertOrIgnore([
             ['addon_type' => 'hot',                   'price' => 199, 'created_at' => now(), 'updated_at' => now()],
             ['addon_type' => 'top',                   'price' => 299, 'created_at' => now(), 'updated_at' => now()],
             ['addon_type' => 'anonymous_publication', 'price' => 599, 'created_at' => now(), 'updated_at' => now()],
