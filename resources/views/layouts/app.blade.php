@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>@yield('seo_title', config('app.name', 'My Job'))</title>
-        <meta name="description" content="@yield('seo_description', 'Пошук роботи в Україні — тисячі вакансій по всіх категоріях та містах.')">
+        <meta name="description" content="@yield('seo_description', 'Оголошення про роботу в Україні — перегляд та фільтрація вакансій по всіх категоріях та містах.')">
         @yield('seo_canonical')
         @yield('seo_og')
 
@@ -35,7 +35,6 @@
         <x-header />
 
         <main class="min-h-screen" style="padding-top: 120px;" id="main-content">
-            <img src="{{ asset('img/under-construction.webp') }}" alt="Under Construction" class="block mx-auto" style="height:120px; width:auto; max-width:100%;">
             {{ $slot }}
         </main>
 

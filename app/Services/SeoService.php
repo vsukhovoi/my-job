@@ -18,11 +18,11 @@ final class SeoService
     public function forHome(): array
     {
         return Cache::remember('seo:home', self::CACHE_TTL, function (): array {
-            $title = config('app.name') . ' — Пошук роботи в Україні';
+            $title = config('app.name') . ' — Оголошення про роботу в Україні';
 
             return [
                 'title'          => $title,
-                'description'    => 'Тисячі вакансій по всій Україні. Знайдіть роботу в IT, продажах, медицині, маркетингу та інших сферах. Фільтр за містом, зарплатою та типом зайнятості.',
+                'description'    => 'Тисячі оголошень по всій Україні. Переглядайте вакансії в IT, продажах, медицині, маркетингу та інших сферах. Фільтр за містом, зарплатою та типом зайнятості.',
                 'og_title'       => $title,
                 'og_description' => 'Тисячі вакансій по всій Україні — IT, продажі, маркетинг, медицина та інші сфери.',
                 'og_image'       => asset('img/logo/mj-logo-1300x1300.webp'),

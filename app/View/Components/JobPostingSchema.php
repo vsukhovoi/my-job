@@ -31,10 +31,20 @@ final class JobPostingSchema extends Component
             'title'       => $vacancy->title,
             'description' => strip_tags($vacancy->description ?? ''),
             'datePosted'  => $vacancy->created_at->toDateString(),
+            'url'         => url("/jobs/{$vacancy->slug}"),
+            'identifier'  => [
+                '@type' => 'PropertyValue',
+                'name'  => 'MyJob',
+                'value' => $vacancy->id,
+            ],
         ];
 
         if ($vacancy->expires_at) {
             $data['validThrough'] = $vacancy->expires_at->toIso8601String();
+        }
+
+        if ($company && ! $vacancy->isAnonymous() && $company->logo_url) {
+            $data['image'] = $company->logo_url;
         }
 
         if ($company) {

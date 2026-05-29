@@ -64,7 +64,7 @@
 
         {{-- Links --}}
         <nav class="site-footer__nav">
-            <a href="{{ route('home') }}">Пошук вакансій</a>
+            <a href="{{ route('home') }}">Перегляд вакансій</a>
             <span>•</span>
             <a href="{{ route('home') }}">Категорії</a>
             <span>•</span>
