@@ -45,7 +45,7 @@ class MonoPayGateway implements PaymentGateway
                         'sum'  => $data->amountMinorUnits(),
                         'icon' => '',
                         'unit' => 'послуга',
-                        'code' => "vac_{$data->vacancy->id}",
+                        'code' => $data->vacancy ? "vac_{$data->vacancy->id}" : $data->orderId,
                     ],
                 ],
             ],
