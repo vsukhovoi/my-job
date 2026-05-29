@@ -1,11 +1,22 @@
 <x-app-layout>
 
-@push('head')
-<meta name="description" content="My Job — сучасна українська платформа пошуку роботи. Дізнайтесь про нашу місію, цінності та команду.">
+@section('seo_title', 'Про нас — My Job')
+@section('seo_description', 'My Job — сучасна українська платформа оголошень про роботу. Дізнайтесь про нашу місію, цінності та команду.')
+@section('seo_canonical')
+<link rel="canonical" href="{{ url('/about') }}">
+@endsection
+@section('seo_og')
+<meta property="og:type" content="website">
 <meta property="og:title" content="Про нас — My Job">
 <meta property="og:description" content="Ми будуємо майбутнє ринку праці України. Чесно, швидко та без зайвих складнощів.">
 <meta property="og:url" content="{{ url('/about') }}">
-@endpush
+<meta property="og:image" content="{{ asset('img/logo/mj-logo-1300x1300.webp') }}">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Про нас — My Job">
+<meta name="twitter:description" content="Ми будуємо майбутнє ринку праці України. Чесно, швидко та без зайвих складнощів.">
+<meta name="twitter:image" content="{{ asset('img/logo/mj-logo-1300x1300.webp') }}">
+@endsection
 
 {{-- HERO --}}
 <section class="py-20 px-6 lg:px-16 bg-white">

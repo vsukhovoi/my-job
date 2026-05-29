@@ -58,9 +58,18 @@ Volt::route('/interview-request/{interviewRequestId}/view', 'employer.interview-
 // Sitemap (cached 24 h)
 Route::get('/sitemap.xml', function () {
     $xml = Cache::remember('sitemap', 86400, function () {
-        $vacancies = Vacancy::where('is_active', true)->get(['slug', 'updated_at']);
+        $vacancies = Vacancy::query()
+            ->active()
+            ->where('publication_type', \App\Enums\VacancyPublicationType::Standard)
+            ->get(['slug', 'updated_at']);
 
-        return response()->view('sitemap', compact('vacancies'))->getContent();
+        $staticPages = [
+            ['loc' => url('/'),          'lastmod' => now()->toAtomString(), 'changefreq' => 'daily',   'priority' => '1.0'],
+            ['loc' => url('/about'),     'lastmod' => now()->toAtomString(), 'changefreq' => 'monthly', 'priority' => '0.5'],
+            ['loc' => url('/contacts'),  'lastmod' => now()->toAtomString(), 'changefreq' => 'monthly', 'priority' => '0.5'],
+        ];
+
+        return response()->view('sitemap', compact('vacancies', 'staticPages'))->getContent();
     });
 
     return response($xml)->header('Content-Type', 'application/xml');

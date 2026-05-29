@@ -1,11 +1,22 @@
 <x-app-layout>
 
-@push('head')
-<meta name="description" content="Зв'яжіться з командою My Job. Підтримка для кандидатів та роботодавців, партнерство, технічні питання.">
+@section('seo_title', 'Контакти та підтримка — My Job')
+@section('seo_description', "Зв'яжіться з командою My Job. Підтримка для кандидатів та роботодавців, партнерство, технічні питання.")
+@section('seo_canonical')
+<link rel="canonical" href="{{ url('/contacts') }}">
+@endsection
+@section('seo_og')
+<meta property="og:type" content="website">
 <meta property="og:title" content="Контакти та підтримка — My Job">
 <meta property="og:description" content="Ми відповідаємо на всі звернення протягом 1 робочого дня.">
 <meta property="og:url" content="{{ url('/contacts') }}">
-@endpush
+<meta property="og:image" content="{{ asset('img/logo/mj-logo-1300x1300.webp') }}">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Контакти та підтримка — My Job">
+<meta name="twitter:description" content="Ми відповідаємо на всі звернення протягом 1 робочого дня.">
+<meta name="twitter:image" content="{{ asset('img/logo/mj-logo-1300x1300.webp') }}">
+@endsection
 
 <div class="max-w-5xl mx-auto px-4 py-12">
 
