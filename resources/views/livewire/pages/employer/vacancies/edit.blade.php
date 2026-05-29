@@ -354,15 +354,15 @@ new #[Layout('layouts.app')] class extends Component
                     </div>
                 </div>
 
-                <div class="rounded-xl p-4" style="border: 1px solid #E5E7EB; background: #F9FAFB;">
-                    <h3 class="font-semibold mb-3" style="color: #1F2937;">Тип публікації</h3>
+                <div class="mj-pub-type-box rounded-xl p-4" style="border: 1px solid #E5E7EB; background: #F9FAFB;">
+                    <h3 class="mj-pub-type-title font-semibold mb-3" style="color: #1F2937;">Тип публікації</h3>
 
                     <div class="space-y-3">
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="radio" wire:model.live="publicationType" value="standard" class="mt-1" />
                             <div>
-                                <p class="font-medium" style="color: #1F2937;">Звичайна — безкоштовно</p>
-                                <p class="text-sm" style="color: #6B7280;">
+                                <p class="mj-pub-type-label font-medium" style="color: #1F2937;">Звичайна — безкоштовно</p>
+                                <p class="mj-pub-type-desc text-sm" style="color: #6B7280;">
                                     Назва та профіль компанії відображаються для кандидатів
                                 </p>
                             </div>
@@ -371,8 +371,8 @@ new #[Layout('layouts.app')] class extends Component
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="radio" wire:model.live="publicationType" value="anonymous" class="mt-1" />
                             <div>
-                                <p class="font-medium" style="color: #1F2937;">Анонімна — платна послуга</p>
-                                <p class="text-sm" style="color: #6B7280;">
+                                <p class="mj-pub-type-label font-medium" style="color: #1F2937;">Анонімна — платна послуга</p>
+                                <p class="mj-pub-type-desc text-sm" style="color: #6B7280;">
                                     Бренд прихований. Автооновлення позиції щотижня.
                                     Вакансія відсутня у списку вакансій компанії.
                                 </p>
@@ -382,7 +382,7 @@ new #[Layout('layouts.app')] class extends Component
 
                     @if($publicationType === 'anonymous')
                         <div class="mt-4">
-                            <label class="block text-sm font-medium mb-1" style="color: #374151;">
+                            <label class="mj-pub-type-label block text-sm font-medium mb-1" style="color: #374151;">
                                 Назва для відображення
                             </label>
                             <input type="text"
