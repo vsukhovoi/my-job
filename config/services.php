@@ -40,6 +40,11 @@ return [
         'account_iban' => env('MONO_ACCOUNT_IBAN'),
     ],
 
+    'monobank_corp' => [
+        'token'        => env('MONO_CORP_TOKEN'),
+        'account_iban' => env('MONO_CORP_IBAN'),
+    ],
+
     'stripe' => [
         'key'            => env('STRIPE_KEY', ''),
         'secret'         => env('STRIPE_SECRET', ''),

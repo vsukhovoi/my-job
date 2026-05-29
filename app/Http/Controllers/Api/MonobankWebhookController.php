@@ -24,6 +24,10 @@ class MonobankWebhookController extends Controller
 
         Log::info('Monobank webhook received', ['statement_id' => $statement['id'] ?? null]);
 
+        if (($statement['status'] ?? '') !== 'DONE') {
+            return response()->json(['status' => 'ignored'], 200);
+        }
+
         ProcessMonobankPayment::dispatch($statement);
 
         return response()->json(['status' => 'ok'], 200);

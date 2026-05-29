@@ -15,8 +15,8 @@ class MonobankService
 
     public function __construct()
     {
-        $this->token       = config('services.monobank.token');
-        $this->accountIban = config('services.monobank.account_iban');
+        $this->token       = config('services.monobank_corp.token');
+        $this->accountIban = config('services.monobank_corp.account_iban');
     }
 
     /**
