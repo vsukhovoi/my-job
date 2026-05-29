@@ -23,6 +23,11 @@ enum AddonType: string
 
     public function price(): int
     {
+        return \App\Models\AddonSetting::priceFor($this);
+    }
+
+    public function defaultPrice(): int
+    {
         return match($this) {
             self::Hot                   => 199,
             self::Top                   => 299,
