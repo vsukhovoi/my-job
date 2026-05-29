@@ -7,7 +7,7 @@ namespace App\Filament\Widgets;
 use App\Enums\AddonType;
 use App\Models\AddonSetting;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
