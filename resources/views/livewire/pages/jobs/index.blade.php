@@ -164,6 +164,9 @@ new #[Layout('layouts.app')] class extends Component
 <meta name="twitter:description" content="{{ $seo['og_description'] }}">
 <meta name="twitter:image" content="{{ $seo['og_image'] }}">
 @endsection
+@push('head')
+    <x-web-site-schema />
+@endpush
 
 <div x-data="{ filtersOpen: false }" class="seeker-dashboard-bg dark:bg-gray-900" style="min-height: 100vh;">
 

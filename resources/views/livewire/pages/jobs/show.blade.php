@@ -208,6 +208,11 @@ new #[Layout('layouts.app')] class extends Component
     @if($vacancy->status === \App\Enums\VacancyStatus::Active)
         <x-job-posting-schema :vacancy="$vacancy" />
     @endif
+    <x-breadcrumb-list-schema :items="[
+        ['name' => 'Вакансії',                   'url' => route('home')],
+        ['name' => $vacancy->category->name,      'url' => route('home', ['categoryId' => $vacancy->category_id])],
+        ['name' => $vacancy->title,               'url' => url('/jobs/' . $vacancy->slug)],
+    ]" />
 @endpush
 
 <div>
