@@ -1133,8 +1133,16 @@ html[data-theme="dark"] .border-green-200 { border-color: #166534 !important; }
 html[data-theme="dark"] .text-green-800 { color: #86efac !important; }
 html[data-theme="dark"] .text-green-600 { color: #4ade80 !important; }
 
+/* Світла тема — Тип публікації */
+.mj-pub-type-box {
+    border: 1px solid #7A7A7A;
+    background-image: url('/img/bg-main.webp');
+    background-repeat: repeat;
+    background-attachment: fixed;
+}
+
 /* Темна тема — Тип публікації */
-html[data-theme="dark"] .mj-pub-type-box { background: #1F2937 !important; border-color: #374151 !important; }
+html[data-theme="dark"] .mj-pub-type-box { background: #1F2937 !important; border-color: #374151 !important; background-image: none !important; }
 html[data-theme="dark"] .mj-pub-type-title { color: #E5E7EB !important; }
 html[data-theme="dark"] .mj-pub-type-label { color: #E5E7EB !important; }
 html[data-theme="dark"] .mj-pub-type-desc  { color: #9CA3AF !important; }

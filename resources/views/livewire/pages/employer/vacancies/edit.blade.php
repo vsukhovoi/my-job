@@ -354,7 +354,7 @@ new #[Layout('layouts.app')] class extends Component
                     </div>
                 </div>
 
-                <div class="mj-pub-type-box rounded-xl p-4" style="border: 1px solid #E5E7EB; background: #F9FAFB;">
+                <div class="mj-pub-type-box rounded-xl p-4">
                     <h3 class="mj-pub-type-title font-semibold mb-3" style="color: #1F2937;">Тип публікації</h3>
 
                     <div class="space-y-3">
