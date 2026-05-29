@@ -100,15 +100,18 @@ new #[Layout('layouts.app')] class extends Component
                 <svg class="ml-auto w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
 
-            {{-- MonoPay --}}
+            {{-- Plata by Mono --}}
             <button wire:click="pay('mono')" wire:loading.attr="disabled"
-                    class="flex items-center gap-4 w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-md transition-all text-left">
+                    class="flex items-center gap-4 w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl hover:border-gray-800 hover:shadow-md transition-all text-left">
                 <div class="w-10 h-10 rounded-xl bg-[#1A1A1A] flex items-center justify-center shrink-0">
-                    <span class="text-white text-xs font-black">M</span>
+                    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                        <rect width="36" height="36" rx="8" fill="#1A1A1A"/>
+                        <text x="5" y="23" font-family="Arial, sans-serif" font-size="11" font-weight="900" fill="white">plata</text>
+                    </svg>
                 </div>
                 <div>
-                    <p class="font-bold text-gray-900">MonoPay</p>
-                    <p class="text-xs text-gray-500">monobank, Apple Pay, Google Pay</p>
+                    <p class="font-bold text-gray-900">Plata by Mono</p>
+                    <p class="text-xs text-gray-500">Карта, Apple Pay, Google Pay</p>
                 </div>
                 <svg class="ml-auto w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
