@@ -30,7 +30,8 @@ new #[Layout('layouts.app')] class extends Component
         $checkout = new CheckoutService($gw);
 
         if ($this->addon === AddonType::AnonymousPublication && $this->vacancyId) {
-            $vacancy = \App\Models\Vacancy::findOrFail($this->vacancyId);
+            $vacancy = \App\Models\Vacancy::where('company_id', auth()->user()->company->id)
+                ->findOrFail($this->vacancyId);
             $url = $checkout->createAnonymousPublicationCheckout($vacancy, auth()->user());
         } else {
             $url = $checkout->createAddonCheckout($this->addon, auth()->user());
