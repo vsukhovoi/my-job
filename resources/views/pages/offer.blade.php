@@ -276,11 +276,15 @@
                     </tr>
                     <tr>
                         <td class="py-2.5 pr-6 font-semibold text-gray-700 whitespace-nowrap">IBAN</td>
-                        <td class="py-2.5 font-mono">UA423052990000026009050581926</td>
+                        <td class="py-2.5 font-mono">UA753220010000026009700017366</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2.5 pr-6 font-semibold text-gray-700 whitespace-nowrap">МФО</td>
+                        <td class="py-2.5">322001</td>
                     </tr>
                     <tr>
                         <td class="py-2.5 pr-6 font-semibold text-gray-700 whitespace-nowrap">Банк</td>
-                        <td class="py-2.5">АТ КБ «Приватбанк»</td>
+                        <td class="py-2.5">АТ «УНІВЕРСАЛ БАНК»</td>
                     </tr>
                     <tr>
                         <td class="py-2.5 pr-6 font-semibold text-gray-700 whitespace-nowrap">Оподаткування</td>
