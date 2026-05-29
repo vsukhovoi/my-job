@@ -92,7 +92,8 @@ final class VacancyService
         $counter = 1;
 
         while (
-            Vacancy::where('slug', $slug)
+            Vacancy::withTrashed()
+                ->where('slug', $slug)
                 ->when($excludeId, fn($q) => $q->where('id', '!=', $excludeId))
                 ->exists()
         ) {
