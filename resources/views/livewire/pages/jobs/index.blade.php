@@ -111,7 +111,37 @@ new #[Layout('layouts.app')] class extends Component
             || $this->salaryMin !== ''
             || $this->salaryMax !== ''
             || !empty($this->languages)
-            || !empty($this->suitability);
+            || !empty($this->suitability)
+            || $this->companyId !== '';
+    }
+
+    public function canonicalUrl(): string
+    {
+        $page = $this->getPage();
+
+        if (! $this->hasActiveFilters() && $page <= 1) {
+            return url('/');
+        }
+
+        $params = array_filter([
+            'search'         => $this->search ?: null,
+            'categoryId'     => $this->categoryId ?: null,
+            'employmentType' => $this->employmentType ?: null,
+            'cityId'         => $this->cityId ?: null,
+            'salaryMin'      => $this->salaryMin ?: null,
+            'salaryMax'      => $this->salaryMax ?: null,
+            'languages'      => $this->languages ?: null,
+            'suitability'    => $this->suitability ?: null,
+            'companyId'      => $this->companyId ?: null,
+            'page'           => $page > 1 ? $page : null,
+        ]);
+
+        return url('/') . (empty($params) ? '' : '?' . http_build_query($params));
+    }
+
+    public function robotsDirective(): string
+    {
+        return $this->hasActiveFilters() ? 'noindex, follow' : 'index, follow';
     }
 }; ?>
 
@@ -119,7 +149,8 @@ new #[Layout('layouts.app')] class extends Component
 @section('seo_title', $seo['title'])
 @section('seo_description', $seo['description'])
 @section('seo_canonical')
-<link rel="canonical" href="{{ $seo['canonical'] }}">
+<link rel="canonical" href="{{ $this->canonicalUrl() }}">
+<meta name="robots" content="{{ $this->robotsDirective() }}">
 @endsection
 @section('seo_og')
 <meta property="og:type" content="website">
