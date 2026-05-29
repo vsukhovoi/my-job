@@ -44,12 +44,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([])
 
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
-                \App\Filament\Widgets\PaymentStatsWidget::class,
-                \App\Filament\Widgets\PaymentGatewayChartWidget::class,
-                \App\Filament\Widgets\AddonSettingsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
