@@ -11,6 +11,11 @@ class AddonSetting extends Model
 {
     protected $fillable = ['addon_type', 'price'];
 
+    protected static function booted(): void
+    {
+        static::saved(fn (self $setting) => static::clearPriceCache($setting->addon_type));
+    }
+
     public static function priceFor(AddonType $addon): int
     {
         return (int) cache()->remember(

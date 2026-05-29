@@ -73,9 +73,7 @@ class AddonSettingsWidget extends BaseWidget
                             ->minValue(1)
                             ->suffix('₴'),
                     ])
-                    ->after(function (AddonSetting $record): void {
-                        AddonSetting::clearPriceCache($record->addon_type);
-                    }),
+                    ,
             ])
             ->paginated(false);
     }
