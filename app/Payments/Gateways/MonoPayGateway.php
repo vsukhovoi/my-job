@@ -106,6 +106,24 @@ class MonoPayGateway implements PaymentGateway
         $isPaid = $status === 'success';
 
         $orderId = $data['reference'] ?? '';
+
+        if (str_starts_with($orderId, 'anon_')) {
+            $anonymousVacancyId = CheckoutService::parseAnonymousOrderId($orderId);
+
+            return new PaymentResult(
+                isPaid:               $isPaid,
+                gatewayName:          $this->name(),
+                externalEventId:      $data['invoiceId'] ?? uniqid('mono_', true),
+                orderId:              $orderId,
+                amountKopecks:        (int) ($data['amount'] ?? 0),
+                currency:             'UAH',
+                vacancyId:            null,
+                days:                 null,
+                anonymousVacancyId:   $anonymousVacancyId,
+                failureReason:        $isPaid ? null : "status={$status}",
+            );
+        }
+
         [$vacancyId, $days] = CheckoutService::parseOrderId($orderId);
 
         return new PaymentResult(

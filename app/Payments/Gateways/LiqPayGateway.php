@@ -112,6 +112,23 @@ class LiqPayGateway implements PaymentGateway
             );
         }
 
+        if (str_starts_with($orderId, 'anon_')) {
+            $anonymousVacancyId = CheckoutService::parseAnonymousOrderId($orderId);
+
+            return new PaymentResult(
+                isPaid:               $isPaid,
+                gatewayName:          $this->name(),
+                externalEventId:      $eventId,
+                orderId:              $orderId,
+                amountKopecks:        $amountKopecks,
+                currency:             $decoded['currency'] ?? 'UAH',
+                vacancyId:            null,
+                days:                 null,
+                anonymousVacancyId:   $anonymousVacancyId,
+                failureReason:        $isPaid ? null : ($decoded['err_description'] ?? "status={$status}"),
+            );
+        }
+
         [$vacancyId, $days] = CheckoutService::parseOrderId($orderId);
 
         return new PaymentResult(
