@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Vacancy;
 use App\Payments\Contracts\PaymentGateway;
 use App\Payments\DTOs\PaymentResult;
+use App\Services\TelegramNotifier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -163,6 +164,63 @@ class AnonymousVacancyTest extends TestCase
         $this->postJson('/webhooks/payments/mono', []);
 
         $this->assertTrue($this->vacancy->fresh()->is_active);
+    }
+
+    #[Test]
+    public function send_vacancy_alerts_hides_company_name_for_anonymous(): void
+    {
+        \App\Models\TelegramSubscription::factory()->create([
+            'category_id' => $this->vacancy->category_id,
+            'telegram_id' => '999999999',
+        ]);
+
+        $this->vacancy->update([
+            'publication_type' => VacancyPublicationType::Anonymous,
+            'anonymous_name'   => 'Велика Компанія',
+            'is_active'        => true,
+            'published_at'     => now(),
+        ]);
+
+        $notifier = $this->createMock(TelegramNotifier::class);
+        $notifier->expects($this->once())
+            ->method('send')
+            ->with(
+                '999999999',
+                $this->callback(fn(string $text) =>
+                    str_contains($text, 'Велика Компанія') &&
+                    ! str_contains($text, 'ТОВ "Тестова Компанія"')
+                )
+            );
+
+        $this->app->instance(TelegramNotifier::class, $notifier);
+        $this->artisan('app:send-vacancy-alerts')->assertSuccessful();
+    }
+
+    #[Test]
+    public function send_vacancy_alerts_shows_real_company_name_for_standard(): void
+    {
+        \App\Models\TelegramSubscription::factory()->create([
+            'category_id' => $this->vacancy->category_id,
+            'telegram_id' => '888888888',
+        ]);
+
+        $this->vacancy->update([
+            'is_active'    => true,
+            'published_at' => now(),
+        ]);
+
+        $notifier = $this->createMock(TelegramNotifier::class);
+        $notifier->expects($this->once())
+            ->method('send')
+            ->with(
+                '888888888',
+                $this->callback(fn(string $text) =>
+                    str_contains($text, 'ТОВ "Тестова Компанія"')
+                )
+            );
+
+        $this->app->instance(TelegramNotifier::class, $notifier);
+        $this->artisan('app:send-vacancy-alerts')->assertSuccessful();
     }
 
     #[Test]

@@ -50,13 +50,13 @@ final class SendVacancyAlerts extends Command
                 ? "\n💰 " . number_format((int) $vacancy->salary_from) . '–' . number_format((int) $vacancy->salary_to) . " {$vacancy->currency}"
                 : '';
 
-            $location = $vacancy->company->location
+            $location = ! $vacancy->isAnonymous() && $vacancy->company->location
                 ? " · {$vacancy->company->location}"
                 : '';
 
             $text = "🆕 <b>Нова вакансія у категорії {$vacancy->category->name}</b>\n\n"
                 . "📌 <b>{$vacancy->title}</b>\n"
-                . "🏭 {$vacancy->company->name}{$location}"
+                . "🏭 {$vacancy->display_company_name}{$location}"
                 . $salary
                 . "\n\n<a href=\"" . rtrim(config('app.url'), '/') . "/jobs/{$vacancy->slug}\">👉 Переглянути вакансію</a>";
 
