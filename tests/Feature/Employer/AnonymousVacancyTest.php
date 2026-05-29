@@ -7,9 +7,12 @@ namespace Tests\Feature\Employer;
 use App\Enums\UserRole;
 use App\Enums\VacancyPublicationType;
 use App\Enums\VacancyStatus;
+use App\Http\Controllers\Payments\PaymentGatewayRegistry;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Vacancy;
+use App\Payments\Contracts\PaymentGateway;
+use App\Payments\DTOs\PaymentResult;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -127,5 +130,72 @@ class AnonymousVacancyTest extends TestCase
             $oldDate->toDateTimeString(),
             $this->vacancy->fresh()->published_at->toDateTimeString()
         );
+    }
+
+    #[Test]
+    public function webhook_activates_anonymous_vacancy_on_paid_result(): void
+    {
+        $this->vacancy->update([
+            'publication_type' => VacancyPublicationType::Anonymous,
+            'is_active'        => false,
+        ]);
+
+        $gateway = $this->createMock(PaymentGateway::class);
+        $gateway->method('name')->willReturn('mono');
+        $gateway->method('parseWebhook')->willReturn(new PaymentResult(
+            isPaid:             true,
+            gatewayName:        'mono',
+            externalEventId:    'evt_test_anon_001',
+            orderId:            'anon_' . $this->vacancy->id . '_abc123',
+            amountKopecks:      59900,
+            currency:           'UAH',
+            vacancyId:          null,
+            days:               null,
+            anonymousVacancyId: $this->vacancy->id,
+        ));
+        $gateway->method('successResponse')->willReturn(response(''));
+
+        $registry = $this->createMock(PaymentGatewayRegistry::class);
+        $registry->method('get')->willReturn($gateway);
+
+        $this->app->instance(PaymentGatewayRegistry::class, $registry);
+
+        $this->postJson('/webhooks/payments/mono', []);
+
+        $this->assertTrue($this->vacancy->fresh()->is_active);
+    }
+
+    #[Test]
+    public function webhook_does_not_activate_vacancy_when_payment_failed(): void
+    {
+        $this->vacancy->update([
+            'publication_type' => VacancyPublicationType::Anonymous,
+            'is_active'        => false,
+        ]);
+
+        $gateway = $this->createMock(PaymentGateway::class);
+        $gateway->method('name')->willReturn('mono');
+        $gateway->method('parseWebhook')->willReturn(new PaymentResult(
+            isPaid:             false,
+            gatewayName:        'mono',
+            externalEventId:    'evt_test_anon_002',
+            orderId:            'anon_' . $this->vacancy->id . '_abc456',
+            amountKopecks:      59900,
+            currency:           'UAH',
+            vacancyId:          null,
+            days:               null,
+            anonymousVacancyId: $this->vacancy->id,
+            failureReason:      'status=failure',
+        ));
+        $gateway->method('successResponse')->willReturn(response(''));
+
+        $registry = $this->createMock(PaymentGatewayRegistry::class);
+        $registry->method('get')->willReturn($gateway);
+
+        $this->app->instance(PaymentGatewayRegistry::class, $registry);
+
+        $this->postJson('/webhooks/payments/mono', []);
+
+        $this->assertFalse($this->vacancy->fresh()->is_active);
     }
 }

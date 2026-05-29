@@ -68,7 +68,9 @@ class WebhookController
         }
 
         try {
-            if ($result->isPlanSubscription()) {
+            if ($result->isAnonymousPublication()) {
+                $this->processAnonymousActivation($result, $gateway);
+            } elseif ($result->isPlanSubscription()) {
                 $this->processPlanSubscription($result, $gateway);
             } else {
                 $this->processExtension($result, $gateway);
@@ -110,6 +112,30 @@ class WebhookController
                 'plan_id'  => $plan->id,
                 'plan'     => $plan->name,
                 'event_id' => $result->externalEventId,
+            ]);
+        });
+    }
+
+    private function processAnonymousActivation(PaymentResult $result, string $gateway): void
+    {
+        if (! $result->anonymousVacancyId) {
+            throw new \UnexpectedValueException(
+                "Cannot extract vacancy_id from orderId={$result->orderId}"
+            );
+        }
+
+        DB::transaction(function () use ($result, $gateway): void {
+            $vacancy = Vacancy::lockForUpdate()->find($result->anonymousVacancyId);
+
+            if (! $vacancy) {
+                throw new \DomainException("Vacancy {$result->anonymousVacancyId} not found");
+            }
+
+            $vacancy->update(['is_active' => true]);
+
+            Log::channel('payments')->info("Anonymous vacancy activated [{$gateway}]", [
+                'vacancy_id' => $vacancy->id,
+                'event_id'   => $result->externalEventId,
             ]);
         });
     }
