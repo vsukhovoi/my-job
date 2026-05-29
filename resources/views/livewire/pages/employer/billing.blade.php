@@ -192,18 +192,21 @@ new #[Layout('layouts.app')] class extends Component
                     </div>
 
                     {{-- Доступ до бази CV --}}
-                    <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl hover:border-blue-200 hover:bg-blue-50/30 transition-colors">
+                    <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl opacity-60">
                         <span class="text-2xl shrink-0">📄</span>
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold text-gray-900 text-sm">Доступ до бази CV</p>
                             <p class="text-xs text-gray-500">Перегляд резюме кандидатів · 30 днів</p>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <span class="text-sm font-bold text-gray-800">990 ₴</span>
+                            {{-- <span class="text-sm font-bold text-gray-800">990 ₴</span>
                             <a href="{{ route('employer.billing.checkout.addon', ['addon' => 'cv_access']) }}"
                                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors whitespace-nowrap">
                                 Придбати
-                            </a>
+                            </a> --}}
+                            <span class="px-3 py-1.5 bg-gray-100 text-gray-500 text-xs font-semibold rounded-lg whitespace-nowrap">
+                                В розробці
+                            </span>
                         </div>
                     </div>
 
