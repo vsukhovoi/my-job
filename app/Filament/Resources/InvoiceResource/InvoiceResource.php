@@ -9,6 +9,7 @@ use App\Filament\Resources\InvoiceResource\Pages\ListInvoices;
 use App\Models\Invoice;
 use App\Services\InvoiceService;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -77,7 +78,7 @@ class InvoiceResource extends Resource
                     ->placeholder('—'),
             ])
             ->actions([
-                Tables\Actions\Action::make('confirm_payment')
+                Action::make('confirm_payment')
                     ->label('Підтвердити оплату')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
@@ -90,7 +91,7 @@ class InvoiceResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\Action::make('cancel_invoice')
+                Action::make('cancel_invoice')
                     ->label('Скасувати')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
