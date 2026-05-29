@@ -174,20 +174,36 @@ new #[Layout('layouts.app')] class extends Component
                     </div>
 
                     {{-- Анонімна публікація --}}
-                    <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl hover:border-green-200 hover:bg-green-50/30 transition-colors">
+                    @php
+                        $pendingAnonId = session('anonymous_vacancy_id');
+                        $pendingAnonVacancy = $pendingAnonId
+                            ? \App\Models\Vacancy::find($pendingAnonId)
+                            : null;
+                        $hasPendingAnon = $pendingAnonVacancy && ! $pendingAnonVacancy->is_active;
+                    @endphp
+                    <div class="flex items-center gap-3 p-3 border {{ $hasPendingAnon ? 'border-purple-300 bg-purple-50/40' : 'border-gray-100' }} rounded-xl hover:border-purple-200 hover:bg-purple-50/30 transition-colors">
                         <span class="text-2xl shrink-0">🕵️</span>
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold text-gray-900 text-sm">Анонімна публікація</p>
-                            <p class="text-xs text-gray-500">Публікація без бренду компанії</p>
+                            @if($hasPendingAnon)
+                                <p class="text-xs text-purple-600">Вакансія «{{ $pendingAnonVacancy->title }}» очікує оплати</p>
+                            @else
+                                <p class="text-xs text-gray-500">Публікація без бренду компанії · 599 ₴</p>
+                            @endif
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                Доступно
-                            </span>
-                            <a href="{{ route('employer.vacancies.create') }}"
-                               class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap">
-                                Створити
-                            </a>
+                            @if($hasPendingAnon)
+                                <a href="{{ route('employer.billing.checkout.addon', ['addon' => 'anonymous_publication']) }}?vacancy_id={{ $pendingAnonId }}"
+                                   class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors whitespace-nowrap">
+                                    Оплатити 599 ₴
+                                </a>
+                            @else
+                                <span class="text-sm font-bold text-gray-800">599 ₴</span>
+                                <a href="{{ route('employer.vacancies.create') }}"
+                                   class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap">
+                                    Створити
+                                </a>
+                            @endif
                         </div>
                     </div>
 

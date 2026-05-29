@@ -12,10 +12,12 @@ use Livewire\Volt\Component;
 new #[Layout('layouts.app')] class extends Component
 {
     public AddonType $addon;
+    public ?int $vacancyId = null;
 
     public function mount(AddonType $addon): void
     {
         $this->addon = $addon;
+        $this->vacancyId = request()->integer('vacancy_id') ?: null;
     }
 
     public function pay(string $gateway): void
@@ -26,17 +28,27 @@ new #[Layout('layouts.app')] class extends Component
         abort_if($gw === null, 422, "Невідомий шлюз: {$gateway}");
 
         $checkout = new CheckoutService($gw);
-        $url = $checkout->createAddonCheckout($this->addon, auth()->user());
+
+        if ($this->addon === AddonType::AnonymousPublication && $this->vacancyId) {
+            $vacancy = \App\Models\Vacancy::findOrFail($this->vacancyId);
+            $url = $checkout->createAnonymousPublicationCheckout($vacancy, auth()->user());
+        } else {
+            $url = $checkout->createAddonCheckout($this->addon, auth()->user());
+        }
 
         $this->redirect($url, navigate: false);
     }
 
     public function payByIban(): void
     {
+        $label = $this->addon === AddonType::AnonymousPublication && $this->vacancyId
+            ? "Анонімна публікація вакансії #{$this->vacancyId}"
+            : $this->addon->label();
+
         $invoice = app(InvoiceService::class)->create(
             auth()->user(),
             (int) ($this->addon->price() * 100),
-            planName: $this->addon->label(),
+            planName: $label,
         );
 
         $this->redirect(route('employer.billing.invoice.show', $invoice->invoice_number), navigate: false);
@@ -52,11 +64,19 @@ new #[Layout('layouts.app')] class extends Component
         {{-- Addon summary --}}
         <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-6 text-center">
             <p class="text-sm text-gray-500 mb-1">Ви обрали послугу</p>
-            <h1 class="text-2xl font-extrabold text-gray-900">{{ $addon->label() }}</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900">
+                {{ $addon === \App\Enums\AddonType::AnonymousPublication && $vacancyId
+                    ? 'Анонімна публікація'
+                    : $addon->label() }}
+            </h1>
             <p class="text-3xl font-bold text-blue-600 mt-2">
                 {{ number_format($addon->price(), 0, '.', ' ') }} ₴
             </p>
-            <p class="text-sm text-gray-500 mt-1">Термін дії: {{ $addon->durationDays() }} днів</p>
+            @if($addon === \App\Enums\AddonType::AnonymousPublication)
+                <p class="text-sm text-gray-500 mt-1">На весь термін публікації вакансії</p>
+            @else
+                <p class="text-sm text-gray-500 mt-1">Термін дії: {{ $addon->durationDays() }} днів</p>
+            @endif
         </div>
 
         {{-- Gateway selection --}}
