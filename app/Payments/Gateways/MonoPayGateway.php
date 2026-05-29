@@ -43,15 +43,15 @@ class MonoPayGateway implements PaymentGateway
                         'name' => $data->description,
                         'qty'  => 1,
                         'sum'  => $data->amountMinorUnits(),
-                        'icon' => '',
                         'unit' => 'послуга',
                         'code' => $data->vacancy ? "vac_{$data->vacancy->id}" : $data->orderId,
                     ],
                 ],
             ],
             'redirectUrl' => $data->successUrl,
+            'failUrl'     => $data->cancelUrl,
             'webHookUrl'  => $data->webhookUrl,
-            'validity'    => 3600,
+            'validity'    => 86400,
             'paymentType' => 'debit',
         ];
 
