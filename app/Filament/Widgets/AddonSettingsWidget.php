@@ -17,6 +17,7 @@ class AddonSettingsWidget extends BaseWidget
     protected static ?string $heading = 'Додаткові послуги';
     protected int|string|array $columnSpan = 'full';
     protected static ?int $sort = 10;
+    protected static bool $isDiscoverable = false;
 
     public function table(Table $table): Table
     {
