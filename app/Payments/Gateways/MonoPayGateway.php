@@ -55,7 +55,7 @@ class MonoPayGateway implements PaymentGateway
             'paymentType' => 'debit',
         ];
 
-        $response = Http::withToken(config('payments.gateways.mono.token'))
+        $response = Http::withHeaders(['X-Token' => config('payments.gateways.mono.token')])
             ->post(self::API_BASE . self::API_VERSION . '/create', $payload);
 
         if ($response->failed()) {
@@ -178,7 +178,7 @@ class MonoPayGateway implements PaymentGateway
         }
 
         return cache()->remember('mono:pubkey', 86400, function () {
-            $response = Http::withToken(config('payments.gateways.mono.token'))
+            $response = Http::withHeaders(['X-Token' => config('payments.gateways.mono.token')])
                 ->get(self::API_BASE . '/api/merchant/pubkey');
 
             if ($response->failed()) {
