@@ -18,10 +18,16 @@ final readonly class PaymentResult
         public ?int $planId = null,
         public ?int $userId = null,
         public ?string $failureReason = null,
+        public ?int $anonymousVacancyId = null,
     ) {}
 
     public function isPlanSubscription(): bool
     {
         return $this->planId !== null && $this->userId !== null;
+    }
+
+    public function isAnonymousPublication(): bool
+    {
+        return $this->anonymousVacancyId !== null;
     }
 }
