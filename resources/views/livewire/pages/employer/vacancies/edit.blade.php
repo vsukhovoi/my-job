@@ -127,7 +127,11 @@ new #[Layout('layouts.app')] class extends Component
             'salary_from'      => $this->salaryFrom ?: null,
             'salary_to'        => $this->salaryTo ?: null,
             'currency'         => $this->currency,
-            'is_active'        => true,
+            'is_active'        => match(true) {
+                $this->publicationType !== 'anonymous'                                  => true,   // standard — завжди активна
+                isset($currentVacancy) && $currentVacancy->is_active                   => true,   // редагування вже оплаченої anonymous
+                default                                                                 => false,  // нова або неоплачена anonymous
+            },
             'is_featured'      => $this->isFeatured,
             'is_top'           => $this->isTop,
             'status'           => VacancyStatus::Active,
