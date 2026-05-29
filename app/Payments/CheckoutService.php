@@ -135,4 +135,47 @@ class CheckoutService
         }
         return [null, null];
     }
+
+    // ── Anonymous publication helpers ─────────────────────────────────────────
+
+    /**
+     * Create a checkout URL for anonymous vacancy publication.
+     */
+    public function createAnonymousPublicationCheckout(Vacancy $vacancy, User $user): string
+    {
+        $orderId = self::buildAnonymousOrderId($vacancy->id);
+
+        $data = new CheckoutData(
+            amountKopecks: AddonType::AnonymousPublication->price() * 100,
+            currency:      'UAH',
+            orderId:       $orderId,
+            description:   "Анонімна публікація вакансії «{$vacancy->title}»",
+            successUrl:    route('employer.billing'),
+            cancelUrl:     route('employer.billing'),
+            webhookUrl:    route('webhooks.payments', ['gateway' => $this->gateway->name()]),
+            vacancy:       $vacancy,
+            userId:        $user->id,
+        );
+
+        return $this->gateway->createCheckout($data);
+    }
+
+    /**
+     * Format: anon_{vacancyId}_{suffix}
+     */
+    public static function buildAnonymousOrderId(int $vacancyId): string
+    {
+        return sprintf('anon_%d_%s', $vacancyId, substr(uniqid(), -6));
+    }
+
+    /**
+     * Parse anonymous order ID and return vacancy ID, or null if not an anon order.
+     */
+    public static function parseAnonymousOrderId(string $orderId): ?int
+    {
+        if (preg_match('/^anon_(\d+)_/', $orderId, $m)) {
+            return (int) $m[1];
+        }
+        return null;
+    }
 }

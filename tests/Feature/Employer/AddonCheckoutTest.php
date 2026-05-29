@@ -106,4 +106,47 @@ class AddonCheckoutTest extends TestCase
         $this->assertNotEmpty($url);
         $this->assertStringStartsWith('https://', $url);
     }
+
+    #[Test]
+    public function build_anonymous_order_id_has_correct_prefix(): void
+    {
+        $orderId = CheckoutService::buildAnonymousOrderId(42);
+        $this->assertStringStartsWith('anon_42_', $orderId);
+    }
+
+    #[Test]
+    public function parse_anonymous_order_id_returns_vacancy_id(): void
+    {
+        $orderId = CheckoutService::buildAnonymousOrderId(42);
+        $this->assertSame(42, CheckoutService::parseAnonymousOrderId($orderId));
+    }
+
+    #[Test]
+    public function parse_anonymous_order_id_returns_null_for_other_prefixes(): void
+    {
+        $this->assertNull(CheckoutService::parseAnonymousOrderId('vac_42_30_abc123'));
+        $this->assertNull(CheckoutService::parseAnonymousOrderId('sub_1_2_abc'));
+    }
+
+    #[Test]
+    public function checkout_service_creates_anonymous_publication_checkout(): void
+    {
+        $employer = $this->makeEmployer();
+        $vacancy  = \App\Models\Vacancy::factory()->create([
+            'company_id' => $employer->company->id,
+            'title'      => 'PHP Developer',
+        ]);
+
+        $gateway = $this->createMock(PaymentGateway::class);
+        $gateway->method('name')->willReturn('mono');
+        $gateway->method('createCheckout')->willReturnCallback(
+            fn(CheckoutData $data) => 'https://pay.example.com/' . $data->orderId
+        );
+
+        $service = new CheckoutService($gateway);
+        $url = $service->createAnonymousPublicationCheckout($vacancy, $employer);
+
+        $this->assertStringStartsWith('https://', $url);
+        $this->assertStringContainsString('anon_', $url);
+    }
 }
