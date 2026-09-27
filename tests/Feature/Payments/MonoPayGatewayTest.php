@@ -5,25 +5,29 @@ declare(strict_types=1);
 namespace Tests\Feature\Payments;
 
 use App\Events\VacancyExtended;
+use App\Enums\UserRole;
 use App\Enums\VacancyStatus;
+use App\Models\SubscriptionPlan;
+use App\Models\User;
+use App\Payments\CheckoutService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;
 
 class MonoPayGatewayTest extends PaymentTestCase
 {
-    private string $privateKey = '';
+    private \OpenSSLAsymmetricKey $privateKey;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        if (! function_exists('sodium_crypto_sign_keypair')) {
-            $this->markTestSkipped('sodium extension is required for MonoPay Ed25519 tests');
-        }
-
-        $keyPair          = sodium_crypto_sign_keypair();
-        $this->privateKey = sodium_crypto_sign_secretkey($keyPair);
-        $publicKeyB64     = base64_encode(sodium_crypto_sign_publickey($keyPair));
+        // MonoPay підписує webhook ECDSA (prime256v1 + SHA-256);
+        // /api/merchant/pubkey віддає base64-кодований PEM
+        $this->privateKey = openssl_pkey_new([
+            'private_key_type' => OPENSSL_KEYTYPE_EC,
+            'curve_name'       => 'prime256v1',
+        ]);
+        $publicKeyB64 = base64_encode(openssl_pkey_get_details($this->privateKey)['key']);
 
         config([
             'payments.gateways.mono.token'      => 'test_mono_token',
@@ -113,6 +117,47 @@ class MonoPayGatewayTest extends PaymentTestCase
         Event::assertDispatchedTimes(VacancyExtended::class, 1);
     }
 
+    public function test_signature_from_other_key_returns_400(): void
+    {
+        $body     = json_encode(['invoiceId' => 'x', 'status' => 'success']);
+        $otherKey = openssl_pkey_new(['private_key_type' => OPENSSL_KEYTYPE_EC, 'curve_name' => 'prime256v1']);
+        openssl_sign($body, $signature, $otherKey, OPENSSL_ALGO_SHA256);
+
+        $this->postMono($body, base64_encode($signature))->assertStatus(400);
+    }
+
+    public function test_successful_subscription_webhook_activates_plan(): void
+    {
+        $employer = User::factory()->create(['role' => UserRole::Employer]);
+        $plan     = SubscriptionPlan::create([
+            'type'          => 'start',
+            'name'          => 'Старт',
+            'price_monthly' => 499,
+            'features'      => ['active_jobs' => 3],
+        ]);
+
+        $orderId = CheckoutService::buildSubscriptionOrderId($employer->id, $plan->id);
+        $body    = json_encode([
+            'invoiceId' => 'inv_sub_001',
+            'status'    => 'success',
+            'reference' => $orderId,
+            'amount'    => 49900,
+        ]);
+
+        $this->postMono($body, $this->sign($body))->assertOk();
+
+        $this->assertDatabaseHas('employer_subscriptions', [
+            'user_id' => $employer->id,
+            'plan_id' => $plan->id,
+            'status'  => 'active',
+        ]);
+        $this->assertDatabaseHas('payment_processed_events', [
+            'event_id' => 'inv_sub_001',
+            'gateway'  => 'mono',
+            'order_id' => $orderId,
+        ]);
+    }
+
     // =========================================================================
 
     /**
@@ -131,6 +176,8 @@ class MonoPayGatewayTest extends PaymentTestCase
 
     private function sign(string $body): string
     {
-        return base64_encode(sodium_crypto_sign_detached($body, $this->privateKey));
+        openssl_sign($body, $signature, $this->privateKey, OPENSSL_ALGO_SHA256);
+
+        return base64_encode($signature);
     }
 }

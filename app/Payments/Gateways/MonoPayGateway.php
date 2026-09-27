@@ -83,8 +83,8 @@ class MonoPayGateway implements PaymentGateway
     }
 
     /**
-     * Верифікація Ed25519-підпису та парсинг webhook.
-     * Підпис передається у заголовку X-Sign (base64).
+     * Верифікація ECDSA-підпису та парсинг webhook.
+     * Підпис передається у заголовку X-Sign (base64 DER).
      *
      * @throws InvalidWebhookSignatureException
      */
@@ -97,7 +97,7 @@ class MonoPayGateway implements PaymentGateway
             throw new InvalidWebhookSignatureException('MonoPay: missing X-Sign header');
         }
 
-        $this->verifyEd25519Signature($body, $signB64);
+        $this->verifySignature($body, $signB64);
 
         $data = $request->json()->all();
 
@@ -106,6 +106,24 @@ class MonoPayGateway implements PaymentGateway
         $isPaid = $status === 'success';
 
         $orderId = $data['reference'] ?? '';
+
+        if (str_starts_with($orderId, 'sub_')) {
+            [$userId, $planId] = CheckoutService::parseSubscriptionOrderId($orderId);
+
+            return new PaymentResult(
+                isPaid:          $isPaid,
+                gatewayName:     $this->name(),
+                externalEventId: $data['invoiceId'] ?? uniqid('mono_', true),
+                orderId:         $orderId,
+                amountKopecks:   (int) ($data['amount'] ?? 0),
+                currency:        'UAH',
+                vacancyId:       null,
+                days:            null,
+                planId:          $planId,
+                userId:          $userId,
+                failureReason:   $isPaid ? null : "status={$status}",
+            );
+        }
 
         if (str_starts_with($orderId, 'anon_')) {
             $anonymousVacancyId = CheckoutService::parseAnonymousOrderId($orderId);
@@ -147,38 +165,29 @@ class MonoPayGateway implements PaymentGateway
     // =========================================================================
 
     /**
-     * Верифікація Ed25519-підпису через sodium.
-     * Публічний ключ кешується 24 год; при помилці: php artisan cache:forget mono:pubkey
+     * Верифікація ECDSA (SHA-256) підпису через OpenSSL.
+     * Публічний ключ від /api/merchant/pubkey — base64-кодований PEM.
+     * Ключ кешується 24 год; при помилці: php artisan cache:forget mono:pubkey
      *
      * @throws InvalidWebhookSignatureException
      */
-    private function verifyEd25519Signature(string $body, string $signatureB64): void
+    private function verifySignature(string $body, string $signatureB64): void
     {
-        $publicKeyB64 = $this->fetchPublicKey();
-
         $signature = base64_decode($signatureB64, strict: true);
-        $publicKey = base64_decode($publicKeyB64, strict: true);
+        $publicKey = base64_decode($this->fetchPublicKey(), strict: true);
 
         if ($signature === false || $publicKey === false) {
             throw new InvalidWebhookSignatureException('MonoPay: failed to decode base64 in X-Sign or public key');
         }
 
-        if (! function_exists('sodium_crypto_sign_verify_detached')) {
-            throw new \RuntimeException(
-                'MonoPay webhook verification requires PHP sodium extension. ' .
-                'Run: apt install php-sodium'
-            );
+        $key = openssl_pkey_get_public($publicKey);
+
+        if ($key === false) {
+            throw new InvalidWebhookSignatureException('MonoPay: invalid public key');
         }
 
-        try {
-            $isValid = sodium_crypto_sign_verify_detached($signature, $body, $publicKey);
-        } catch (\SodiumException $e) {
-            // Неправильна довжина підпису або ключа
-            throw new InvalidWebhookSignatureException('MonoPay: ' . $e->getMessage());
-        }
-
-        if (! $isValid) {
-            throw new InvalidWebhookSignatureException('MonoPay: Ed25519 signature verification failed');
+        if (openssl_verify($body, $signature, $key, OPENSSL_ALGO_SHA256) !== 1) {
+            throw new InvalidWebhookSignatureException('MonoPay: ECDSA signature verification failed');
         }
     }
 
