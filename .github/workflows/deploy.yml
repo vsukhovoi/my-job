@@ -35,8 +35,10 @@ jobs:
             git checkout "$DEPLOY_BRANCH"
             git reset --hard "origin/$DEPLOY_BRANCH"
 
-            echo "==> Building Docker image..."
-            docker compose build app
+            echo "==> Building Docker images..."
+            # queue і scheduler мають власні образи з того ж Dockerfile —
+            # без перезбірки вони лишаються на старому коді
+            docker compose build app queue scheduler
 
             echo "==> Syncing public assets to nginx volume..."
             docker run --rm --user root \
