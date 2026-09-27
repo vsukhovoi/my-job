@@ -25,8 +25,9 @@ class PaymentTransactionFactory extends Factory
             DB::table('payment_processed_events')->insert([
                 'event_id'     => $attrs['event_id'],
                 'gateway'      => $attrs['gateway'],
-                'order_id'     => $attrs['order_id'],
-                'processed_at' => $attrs['processed_at'] instanceof \DateTimeInterface
+                'order_id'       => $attrs['order_id'],
+                'amount_kopecks' => $attrs['amount_kopecks'] ?? null,
+                'processed_at'   => $attrs['processed_at'] instanceof \DateTimeInterface
                     ? $attrs['processed_at']->format('Y-m-d H:i:s')
                     : (string) $attrs['processed_at'],
             ]);
@@ -74,6 +75,14 @@ class PaymentTransactionFactory extends Factory
     {
         return $this->state([
             'order_id' => CheckoutService::buildOrderId($vacancy->id, $days),
+        ]);
+    }
+
+    public function forSubscription(int $userId, int $planId, int $amountKopecks): static
+    {
+        return $this->state([
+            'order_id'       => CheckoutService::buildSubscriptionOrderId($userId, $planId),
+            'amount_kopecks' => $amountKopecks,
         ]);
     }
 

@@ -152,9 +152,10 @@ class MonoPayGatewayTest extends PaymentTestCase
             'status'  => 'active',
         ]);
         $this->assertDatabaseHas('payment_processed_events', [
-            'event_id' => 'inv_sub_001',
-            'gateway'  => 'mono',
-            'order_id' => $orderId,
+            'event_id'       => 'inv_sub_001',
+            'gateway'        => 'mono',
+            'order_id'       => $orderId,
+            'amount_kopecks' => 49900,
         ]);
     }
 

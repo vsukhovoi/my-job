@@ -56,6 +56,15 @@ class PaymentStatsWidgetTest extends TestCase
         $component->assertSee((string) number_format($expectedUah, 0, '.', ' '));
     }
 
+    public function test_this_month_revenue_includes_stored_subscription_amount(): void
+    {
+        PaymentTransaction::factory()->forSubscription(1, 2, 49900)->thisMonth()->create();
+        PaymentTransaction::factory()->forSubscription(1, 2, 49900)->thisMonth()->create();
+
+        Livewire::test(PaymentStatsWidget::class)
+            ->assertSee('998 ₴');
+    }
+
     public function test_last_month_transactions_not_counted_as_today(): void
     {
         $vacancy = Vacancy::factory()->active()->create();

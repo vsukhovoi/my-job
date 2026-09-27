@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\PaymentTransactions\Tables;
 
 use App\Models\PaymentTransaction;
-use App\Models\Vacancy;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
@@ -53,27 +52,9 @@ class PaymentTransactionsTable
                     })
                     ->sortable(false),
 
-                TextColumn::make('days')
-                    ->label('Днів')
-                    ->state(fn (PaymentTransaction $record): string =>
-                        $record->days ? "{$record->days} д." : '—'
-                    ),
-
-                TextColumn::make('vacancy_title')
-                    ->label('Вакансія')
-                    ->state(function (PaymentTransaction $record): string {
-                        if (! $record->vacancy_id) {
-                            return "#{$record->order_id}";
-                        }
-                        static $cache = [];
-                        if (! isset($cache[$record->vacancy_id])) {
-                            $cache[$record->vacancy_id] = Vacancy::find($record->vacancy_id);
-                        }
-                        $vacancy = $cache[$record->vacancy_id];
-                        return $vacancy
-                            ? "#{$vacancy->id} {$vacancy->title}"
-                            : "#{$record->vacancy_id} (видалено)";
-                    })
+                TextColumn::make('purpose')
+                    ->label('Призначення')
+                    ->state(fn (PaymentTransaction $record): string => $record->purpose)
                     ->searchable(false)
                     ->limit(40),
 

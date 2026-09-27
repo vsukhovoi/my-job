@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Widgets;
 
 use App\Models\PaymentTransaction;
-use App\Payments\CheckoutService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\DB;
@@ -63,13 +62,10 @@ class PaymentStatsWidget extends BaseWidget
             default      => $query,
         };
 
-        $transactions = $query->pluck('order_id');
+        $transactions = $query->get(['event_id', 'order_id', 'amount_kopecks']);
         $count = $transactions->count();
 
-        $total = $transactions->sum(function (string $orderId): float {
-            [, $days] = CheckoutService::parseOrderId($orderId);
-            return $days ? (config("payments.prices.{$days}") ?? 0) / 100 : 0;
-        });
+        $total = $transactions->sum(fn (PaymentTransaction $tx): float => $tx->amount_uah ?? 0);
 
         return compact('count', 'total');
     }
@@ -106,22 +102,13 @@ class PaymentStatsWidget extends BaseWidget
 
     private function getDailyRevenueChart(): array
     {
-        $rows = PaymentTransaction::query()
+        return PaymentTransaction::query()
             ->where('processed_at', '>=', now()->subDays(14))
-            ->selectRaw('DATE(processed_at) as date, GROUP_CONCAT(order_id) as order_ids')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
-
-        return $rows->map(function ($row): float {
-            $total = 0.0;
-            foreach (explode(',', $row->order_ids) as $orderId) {
-                [, $days] = CheckoutService::parseOrderId($orderId);
-                if ($days) {
-                    $total += (config("payments.prices.{$days}") ?? 0) / 100;
-                }
-            }
-            return $total;
-        })->values()->toArray();
+            ->orderBy('processed_at')
+            ->get(['event_id', 'order_id', 'amount_kopecks', 'processed_at'])
+            ->groupBy(fn (PaymentTransaction $tx): string => $tx->processed_at->toDateString())
+            ->map(fn ($day): float => $day->sum(fn (PaymentTransaction $tx): float => $tx->amount_uah ?? 0))
+            ->values()
+            ->toArray();
     }
 }

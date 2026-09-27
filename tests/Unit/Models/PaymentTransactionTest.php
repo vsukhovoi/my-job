@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Models;
 
 use App\Models\PaymentTransaction;
+use App\Models\SubscriptionPlan;
 use App\Models\Vacancy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,46 @@ class PaymentTransactionTest extends TestCase
         $tx = PaymentTransaction::factory()->create(['order_id' => 'unknown_format_123']);
 
         $this->assertNull($tx->amount_uah);
+    }
+
+    public function test_amount_uah_prefers_stored_amount(): void
+    {
+        $vacancy = Vacancy::factory()->active()->create();
+        $tx = PaymentTransaction::factory()->forVacancy($vacancy, 30)->create(['amount_kopecks' => 18050]);
+
+        $this->assertSame(180.5, $tx->fresh()->amount_uah);
+    }
+
+    public function test_subscription_amount_and_purpose(): void
+    {
+        $plan = SubscriptionPlan::create([
+            'type'          => 'start',
+            'name'          => 'Старт',
+            'price_monthly' => 499,
+            'features'      => [],
+        ]);
+        $tx = PaymentTransaction::factory()->forSubscription(107, $plan->id, 49900)->create();
+
+        $this->assertSame(499.0, $tx->fresh()->amount_uah);
+        $this->assertSame('Тариф «Старт», 1 міс.', $tx->purpose);
+    }
+
+    public function test_purpose_for_other_order_formats(): void
+    {
+        $vacancy = Vacancy::factory()->active()->create();
+
+        $cases = [
+            "vac_{$vacancy->id}_30_abc123"            => "Вакансія #{$vacancy->id}, 30 дн.",
+            'anon_42_abc123'                          => 'Анонімна публікація, вакансія #42',
+            'addon_cv_access_7_1790000000'            => 'Доступ до бази CV',
+            'sub_7_999_abc123'                        => 'Тариф #999, 1 міс.',
+            'unknown_format_123'                      => '—',
+        ];
+
+        foreach ($cases as $orderId => $expected) {
+            $tx = new PaymentTransaction(['gateway' => 'mono', 'order_id' => $orderId]);
+            $this->assertSame($expected, $tx->purpose, $orderId);
+        }
     }
 
     public function test_gateway_label_returns_correct_names(): void

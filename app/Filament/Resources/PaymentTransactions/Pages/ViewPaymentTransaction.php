@@ -56,28 +56,20 @@ class ViewPaymentTransaction extends ViewRecord
             Section::make('Деталі оплати')
                 ->columns(2)
                 ->schema([
-                    TextEntry::make('days_label')
-                        ->label('Тариф')
-                        ->state(function ($record): string {
-                            [, $days] = CheckoutService::parseOrderId($record->order_id);
-                            return $days ? "{$days} днів" : '—';
-                        }),
+                    TextEntry::make('purpose')
+                        ->label('Призначення')
+                        ->state(fn ($record): string => $record->purpose),
 
                     TextEntry::make('amount_label')
                         ->label('Сума')
-                        ->state(function ($record): string {
-                            [, $days] = CheckoutService::parseOrderId($record->order_id);
-                            if (! $days) {
-                                return '—';
-                            }
-                            $kopecks = config("payments.prices.{$days}");
-                            return $kopecks
-                                ? number_format($kopecks / 100, 0, '.', ' ') . ' ₴'
-                                : '—';
-                        }),
+                        ->state(fn ($record): string => $record->amount_uah !== null
+                            ? number_format($record->amount_uah, 2, '.', ' ') . ' ₴'
+                            : '—'
+                        ),
                 ]),
 
             Section::make('Вакансія')
+                ->visible(fn ($record): bool => $record->vacancy_id !== null)
                 ->schema([
                     TextEntry::make('vacancy_info')
                         ->label('Вакансія')

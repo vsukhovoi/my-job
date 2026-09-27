@@ -84,7 +84,7 @@ class WebhookController
             return $gw->successResponse();
         }
 
-        $this->markProcessed($result->externalEventId, $gateway, $result->orderId);
+        $this->markProcessed($result->externalEventId, $gateway, $result->orderId, $result->amountKopecks);
 
         return $gw->successResponse();
     }
@@ -185,13 +185,14 @@ class WebhookController
         });
     }
 
-    private function markProcessed(string $eventId, string $gateway, string $orderId): void
+    private function markProcessed(string $eventId, string $gateway, string $orderId, int $amountKopecks): void
     {
         DB::table('payment_processed_events')->insert([
-            'event_id'     => $eventId,
-            'gateway'      => $gateway,
-            'order_id'     => $orderId,
-            'processed_at' => now(),
+            'event_id'       => $eventId,
+            'gateway'        => $gateway,
+            'order_id'       => $orderId,
+            'amount_kopecks' => $amountKopecks ?: null,
+            'processed_at'   => now(),
         ]);
     }
 }
